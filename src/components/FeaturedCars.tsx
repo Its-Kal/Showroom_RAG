@@ -22,9 +22,9 @@ const cars = [
   }
 ];
 
-const FeaturedCars: React.FC = () => {
+const FeaturedCars = React.forwardRef<HTMLElement>((props, ref) => {
   return (
-    <section id="featured" className="featured-cars">
+    <section id="featured" className="featured-cars" ref={ref}>
       <h2>Mobil Unggulan Kami</h2>
       <div className="car-list">
         {cars.map((car, index) => (
@@ -38,6 +38,6 @@ const FeaturedCars: React.FC = () => {
       </div>
     </section>
   );
-};
+});
 
 export default FeaturedCars;
