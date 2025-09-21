@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage'; // Impor halaman baru
 import './App.css';
+import ChatBot from './pages/ChatBot';
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
 
           {/* Rute untuk Halaman Tentang Kami */}
           <Route path="/about" element={<AboutPage />} />
+
+          {/* Rute untuk Halaman ChatBot */}
+          <Route path="/Chat" element={<ChatBot />} />
 
           {/* TEMPAT MENAMBAHKAN RUTE BARU */}
           {/* <Route path="/login" element={<LoginPage />} /> */}
