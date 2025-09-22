@@ -62,6 +62,18 @@ Folder ini berisi komponen-komponen yang mewakili satu halaman penuh.
 - **Apa itu?** Komponen yang mewakili halaman "Tentang Kami" yang berdiri sendiri.
 - **Cara Kerjanya:** Berisi JSX (HTML di dalam JavaScript) untuk menampilkan informasi detail tentang perusahaan. Ini adalah contoh halaman statis sederhana. Ketika URL di browser adalah `/about`, React Router akan menampilkan komponen ini di dalam kerangka `<App />`.
 
+### `src/pages/ChatBot.tsx`
+- **Apa itu?** Komponen ini mengimplementasikan fungsionalitas chatbot interaktif yang memungkinkan pengguna berkomunikasi dengan bot untuk mendapatkan rekomendasi mobil.
+- **Cara Kerjanya:**
+  1.  **Manajemen Pesan:** Menggunakan `useState` untuk menyimpan riwayat percakapan (`messages`) antara pengguna dan bot. Setiap pesan memiliki `sender` (pengguna atau bot) dan `text`.
+  2.  **Input Pengguna:** Menggunakan `useState` untuk mengelola teks yang sedang diketik pengguna (`input`) dan `handleSendMessage` untuk mengirim pesan.
+  3.  **Interaksi Webhook:** Ketika pengguna mengirim pesan, pesan tersebut dikirim ke URL webhook eksternal (`https://n8n-mihwklraj3fx.bgxy.sumopod.my.id/webhook/...`) menggunakan `fetch` API. Webhook ini bertanggung jawab untuk memproses pesan dan mengembalikan respons dari bot.
+  4.  **Status Loading:** `isLoading` state digunakan untuk menunjukkan bahwa bot sedang memproses permintaan, menonaktifkan input dan tombol kirim untuk mencegah pengiriman pesan ganda.
+  5.  **Scroll Otomatis:** `useEffect` dan `useRef` digunakan untuk memastikan area obrolan selalu menggulir ke bawah secara otomatis, menampilkan pesan terbaru.
+  6.  **Batasan Riwayat:** Konstanta `CHAT_HISTORY_LIMIT` (disetel ke 5) membatasi jumlah pesan yang disimpan dalam riwayat obrolan untuk menjaga performa dan menghindari penggunaan memori yang berlebihan. Hanya 5 pesan terakhir yang akan ditampilkan.
+  7.  **Pengecekan Status Webhook:** Saat komponen dimuat, sebuah `useEffect` akan melakukan permintaan `HEAD` ke URL webhook untuk memeriksa ketersediaan koneksi. Status koneksi (`Terhubung`, `Tidak Terhubung`, atau `Memeriksa...`) akan ditampilkan kepada pengguna. Input pesan dan tombol kirim akan dinonaktifkan jika webhook tidak terhubung.
+  8.  **Penanganan Error:** Dilengkapi dengan blok `try-catch` untuk menangani potensi kesalahan jaringan atau respons webhook yang tidak valid, memberikan umpan balik yang sesuai kepada pengguna dan memperbarui status koneksi webhook jika terjadi kesalahan.
+
 ---
 
 ## Bab 4: Komponen (`src/components`)
@@ -73,7 +85,7 @@ Folder ini berisi blok bangunan UI yang lebih kecil dan dapat digunakan kembali.
 - **Cara Kerjanya:** Menggunakan komponen `<Link>` dari `react-router-dom` (bukan tag `<a>` biasa). Ketika diklik, `<Link>` memberi tahu React Router untuk mengubah URL dan merender komponen halaman yang sesuai, tanpa perlu me-refresh seluruh halaman web.
 
 ### `src/components/Footer.tsx`
-- **Apa itu?** Komponen untuk bagian footer bawah.
+- **Apa itu??** Komponen untuk bagian footer bawah.
 - **Cara Kerjanya:** Komponen statis sederhana yang hanya menampilkan informasi kontak dan hak cipta.
 
 ### `src/components/Hero.tsx`
