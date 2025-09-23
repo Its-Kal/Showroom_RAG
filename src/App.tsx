@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import CarDetailPage from './pages/CarDetailPage';
 import AboutPage from './pages/AboutPage'; // Impor halaman baru
 import './App.css';
 
@@ -20,6 +21,9 @@ function App() {
 
           {/* TEMPAT MENAMBAHKAN RUTE BARU */}
           {/* <Route path="/login" element={<LoginPage />} /> */}
+
+            {/* Tambahkan route ini */}
+            <Route path="/cars/:carId" element={<CarDetailPage />} />
 
         </Routes>
         <Footer />

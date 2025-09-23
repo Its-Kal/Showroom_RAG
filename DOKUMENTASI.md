@@ -107,3 +107,8 @@ Impor halaman baru Anda di `src/App.tsx` dan tambahkan satu baris `<Route>` di d
 
 **Langkah 3 (Opsional): Tambah Link Navigasi**
 Buka `src/components/Header.tsx` dan tambahkan `<Link>` baru ke halaman tersebut.
+
+**DIMAS
+create CarDetailPage.tsx
+create CarDetail.tsx
+change featuredCars.tsx
