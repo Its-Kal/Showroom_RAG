@@ -2,9 +2,11 @@ import React, { useRef } from 'react';
 import Hero from '../components/Hero';
 import FeaturedCars from '../components/FeaturedCars';
 import About from '../components/About';
+import CollectionSection from '../components/CollectionSection'; 
+import TestimonialSection from '../components/TestimonialSection';  
 
 const HomePage: React.FC = () => {
-  const featuredRef = useRef<HTMLElement>(null);
+  const featuredRef = useRef<HTMLDivElement>(null);
 
   const handleScrollToFeatured = () => {
     featuredRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -13,8 +15,8 @@ const HomePage: React.FC = () => {
   return (
     <main>
       <Hero onButtonClick={handleScrollToFeatured} />
-      <FeaturedCars ref={featuredRef} />
-      <About />
+      <CollectionSection />
+      <TestimonialSection />
     </main>
   );
 };
