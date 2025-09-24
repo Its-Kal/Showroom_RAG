@@ -28,9 +28,7 @@ const CarDetailPage = () => {
 
     return (
         <div>
-            <Header />
             <CarDetail car={carData} />
-            <Footer />
         </div>
     );
 };
