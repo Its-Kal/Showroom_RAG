@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Car } from '../types/Car';
 
 interface CarCardProps {
@@ -29,7 +30,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           <span>⚡ {car.acceleration}</span>
           <span>⛽ {car.fuelConsumption}</span>
         </div>
-        <button className="btn-detail">Lihat Detail</button>
+        <Link to={`/koleksi/${car.id}`} className="btn-detail">Lihat Detail</Link>
       </div>
     </div>
   );
