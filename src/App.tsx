@@ -8,6 +8,7 @@ import AboutPage from './pages/AboutPage'; // Impor halaman baru
 import './App.css';
 import ChatBot from './pages/ChatBot';
 import NotFoundPage from "./pages/NotFoundPage";
+import CarListPage from './pages/CarListPage';
 
 function App() {
   return (
@@ -26,12 +27,12 @@ function App() {
 
           {/* Rute untuk Halaman ChatBot */}
           <Route path="*" element={<NotFoundPage/>} />
-
+            <Route path="/koleksi" element={<CarListPage/>} />
           {/* TEMPAT MENAMBAHKAN RUTE BARU */}
           {/* <Route path="/login" element={<LoginPage />} /> */}
 
             {/* Tambahkan route ini */}
-            <Route path="/cars/:carId" element={<CarDetailPage />} />
+            <Route path="/koleksi/:carId" element={<CarDetailPage />} />
 
         </Routes>
         <Footer />

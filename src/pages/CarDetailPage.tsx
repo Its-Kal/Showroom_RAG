@@ -1,34 +1,48 @@
-import React from 'react'; 
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '../components/Header';
 import CarDetail from '../components/CarDetail';
-import Footer from '../components/Footer';
+import NotFoundPage from './NotFoundPage';
+import { mockCars } from '../components/CollectionSection';
+import { CarDetailData } from '../types/Car';
+
+// Data tambahan yang hanya ada di halaman detail
+const carDetailsData = {
+    1: { // id mobil: 1
+        description: 'Sedan mewah flagship dari BMW yang menawarkan kombinasi sempurna antara kenyamanan, teknologi, dan performa.',
+        images: ['https://via.placeholder.com/400x300/00008B/FFFFFF?text=BMW+View+1', 'https://via.placeholder.com/400x300/00008B/FFFFFF?text=BMW+View+2'],
+        specifications: { engine: '4.4L V8 Twin-Turbo', transmission: '8-Speed Automatic', fuel: 'Bensin' }
+    },
+    2: { // id mobil: 2
+        description: 'SUV mewah berukuran penuh yang menetapkan standar baru untuk ruang, kenyamanan, dan kemewahan di kelasnya.',
+        images: ['https://via.placeholder.com/400x300/E0E0E0/000000?text=Mercedes+View+1'],
+        specifications: { engine: '4.0L V8 Biturbo with EQ Boost', transmission: '9G-TRONIC Automatic', fuel: 'Bensin' }
+    },
+    3: { // id mobil: 3
+        description: 'Mobil listrik dengan akselerasi tercepat di dunia, menggabungkan performa supercar dengan kepraktisan sedan.',
+        images: ['https://via.placeholder.com/400x300/DC143C/FFFFFF?text=Tesla+View+1'],
+        specifications: { engine: 'Dual Motor All-Wheel Drive', transmission: '1-Speed Automatic', fuel: 'Listrik' }
+    }
+};
 
 const CarDetailPage = () => {
     const { carId } = useParams<{ carId: string }>();
+    const carBaseData = mockCars.find(car => car.id.toString() === carId);
 
-    // Di sini kamu akan mengambil data mobil dari API menggunakan carId
-    // Untuk sementara, kita gunakan data dummy
-    const carData = {
-        id: carId,
-        name: 'SUV Modern', // Seharusnya diambil dari API
-        price: 'Rp 450.000.000', // Seharusnya diambil dari API
-        description: 'Kenyamanan dan gaya bertemu dalam SUV canggih ini. Dilengkapi dengan fitur-fitur terbaru untuk pengalaman berkendara yang tak tertandingi.', // Deskripsi lebih panjang
-        images: [
-            'url_gambar_1.jpg', // URL gambar dari API
-            'url_gambar_2.jpg',
-            'url_gambar_3.jpg'
-        ],
-        specifications: {
-            engine: '2.0L Turbo',
-            transmission: 'Automatic',
-            fuel: 'Bensin'
-        }
+    if (!carId || !carBaseData) {
+        return <NotFoundPage />;
+    }
+
+    const details = carDetailsData[carBaseData.id as keyof typeof carDetailsData];
+
+    // Tambahkan anotasi tipe di sini
+    const fullCarData: CarDetailData = {
+        ...carBaseData,
+        ...details
     };
 
     return (
         <div>
-            <CarDetail car={carData} />
+            <CarDetail car={fullCarData} />
         </div>
     );
 };
