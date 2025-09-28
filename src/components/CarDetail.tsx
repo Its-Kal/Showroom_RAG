@@ -1,8 +1,9 @@
 // Di dalam src/components/CarDetail.tsx
 import React from 'react';
+import { CarDetailData } from '../types/Car';
 
 // Definisikan tipe data untuk mobil agar lebih terstruktur
-interface Car {
+/*interface Car {
     id: string | undefined;
     name: string;
     price: string;
@@ -13,10 +14,11 @@ interface Car {
         transmission: string;
         fuel: string;
     };
-}
+}*/
 
 interface CarDetailProps {
-    car: Car;
+    // 3. Gunakan tipe CarDetailData di sini
+    car: CarDetailData;
 }
 
 const CarDetail: React.FC<CarDetailProps> = ({ car }) => {
@@ -24,7 +26,6 @@ const CarDetail: React.FC<CarDetailProps> = ({ car }) => {
         <div className="car-detail-container" style={{ padding: '2rem' }}>
             <h1>{car.name}</h1>
             <div className="car-images">
-                {/* Di sini kamu bisa membuat galeri gambar */}
                 <img src={car.images[0]} alt={car.name} style={{ maxWidth: '100%', borderRadius: '8px' }}/>
             </div>
             <h2>Harga: {car.price}</h2>
@@ -38,7 +39,6 @@ const CarDetail: React.FC<CarDetailProps> = ({ car }) => {
                 <li>Bahan Bakar: {car.specifications.fuel}</li>
             </ul>
 
-            {/* Kamu bisa menambahkan tombol untuk menghubungi atau test drive */}
             <button>Hubungi Kami</button>
         </div>
     );
