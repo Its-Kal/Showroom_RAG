@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import '../App.css';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHomePage, setIsHomePage] = useState(false);
+  const location = useLocation();
 
   const closeMenu = () => setIsMenuOpen(false);
 
   useEffect(() => {
+    setIsHomePage(location.pathname === '/');
+
     const handleScroll = () => {
-      // Set state menjadi true jika scroll lebih dari 50px
-      setIsScrolled(window.scrollY > 50);
+      // Hanya aktifkan efek scroll di homepage
+      if (location.pathname === '/') {
+        setIsScrolled(window.scrollY > 50);
+      }
     };
 
     // Tambahkan event listener saat komponen dimuat
@@ -21,10 +27,17 @@ const Header: React.FC = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [location.pathname]);
+
+  // Menentukan kelas CSS untuk header
+  const headerClasses = [
+    'header',
+    isHomePage ? 'home' : '',
+    isScrolled || !isHomePage ? 'scrolled' : ''
+  ].filter(Boolean).join(' ');
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+    <header className={headerClasses}>
       <div className="nav-container">
         <div className="logo">
           <Link to="/" onClick={closeMenu}>
