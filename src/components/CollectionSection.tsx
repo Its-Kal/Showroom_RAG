@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import CarCard from './CarCard';
 import { Car } from '../types/Car';
+import { useLoading } from '../contexts/LoadingContext';
 
 const CollectionSection: React.FC = () => {
   const [cars, setCars] = useState<Car[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('Semua');
+  const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
     const fetchData = async () => {
+      showLoading();
       try {
         const response = await fetch('http://localhost:8000/cars');
         if (!response.ok) {
@@ -20,7 +22,7 @@ const CollectionSection: React.FC = () => {
       } catch (err) {
         setError('Gagal memuat data mobil.');
       } finally {
-        setLoading(false);
+        hideLoading();
       }
     };
 
@@ -32,10 +34,6 @@ const CollectionSection: React.FC = () => {
     : cars.filter(car => car.category.toLowerCase() === filter.toLowerCase());
 
   const categories = ['Semua', ...Array.from(new Set(cars.map(c => c.category)))];
-
-  if (loading) {
-    return <div className="collection-section"><p>Memuat koleksi mobil...</p></div>;
-  }
 
   if (error) {
     return <div className="collection-section"><p className="error">{error}</p></div>;

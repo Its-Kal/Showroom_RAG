@@ -2,17 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import './App.css';
+import { LoadingProvider, useLoading } from './contexts/LoadingContext';
+import LoadingScreen from './LoadingScreen';
+
+// Import pages directly
 import HomePage from './pages/HomePage';
 import CarDetailPage from './pages/CarDetailPage';
 import AboutPage from './pages/AboutPage';
-import './App.css';
 import ChatBot from './pages/ChatBot';
-import NotFoundPage from "./pages/NotFoundPage";
+import NotFoundPage from './pages/NotFoundPage';
 import CarListPage from './pages/CarListPage';
 import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 
-function App() {
+const AppContent = () => {
+  const { isLoading } = useLoading();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -34,6 +39,7 @@ function App() {
 
   return (
     <Router>
+      {isLoading && <LoadingScreen />}
       <div className="App">
         <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <Routes>
@@ -49,6 +55,14 @@ function App() {
         <Footer />
       </div>
     </Router>
+  );
+}
+
+function App() {
+  return (
+    <LoadingProvider>
+      <AppContent />
+    </LoadingProvider>
   );
 }
 

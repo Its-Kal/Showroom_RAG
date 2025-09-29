@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
 import { Car } from '../types/Car';
+import { useLoading } from '../contexts/LoadingContext';
 
 // Inline SVG Icons
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>;
@@ -8,8 +9,8 @@ const DeleteIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" vie
 
 const AdminDashboard: React.FC = () => {
     const [cars, setCars] = useState<Car[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const [message, setMessage] = useState({ text: '', type: '' });
+    const { showLoading, hideLoading } = useLoading();
 
     // Form state
     const [carName, setCarName] = useState('');
@@ -19,16 +20,16 @@ const AdminDashboard: React.FC = () => {
     const [editId, setEditId] = useState<number | null>(null);
 
     const fetchCars = async () => {
+        showLoading();
         try {
-            setLoading(true);
             const response = await fetch('http://localhost:8000/cars');
             if (!response.ok) throw new Error('Failed to fetch cars');
             const data: Car[] = await response.json();
             setCars(data);
-        } catch (err) {
-            setMessage({ text: 'Could not load car data.', type: 'error' });
+        } catch (err: any) {
+            setMessage({ text: err.message, type: 'error' });
         } finally {
-            setLoading(false);
+            hideLoading();
         }
     };
 
@@ -53,6 +54,7 @@ const AdminDashboard: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
+        showLoading();
 
         const formData = new FormData();
         formData.append('car_name', carName);
@@ -72,9 +74,11 @@ const AdminDashboard: React.FC = () => {
             
             setMessage({ text: result.message, type: 'success' });
             clearForm();
-            fetchCars();
+            await fetchCars();
         } catch (error: any) {
             setMessage({ text: error.message, type: 'error' });
+        } finally {
+            hideLoading();
         }
     };
 
@@ -89,15 +93,18 @@ const AdminDashboard: React.FC = () => {
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Are you sure you want to delete this car?')) {
+            showLoading();
             try {
                 const response = await fetch(`http://localhost:8000/cars/${id}`, { method: 'DELETE' });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.detail || 'Failed to delete car');
                 
                 setMessage({ text: result.message, type: 'success' });
-                fetchCars();
+                await fetchCars();
             } catch (error: any) {
                 setMessage({ text: error.message, type: 'error' });
+            } finally {
+                hideLoading();
             }
         }
     };
@@ -135,24 +142,21 @@ const AdminDashboard: React.FC = () => {
 
                 <div className="car-list-container">
                     <h3>Manage Cars</h3>
-                    {loading && <p>Loading cars...</p>}
-                    {!loading && (
-                        <div className="car-grid-admin">
-                            {cars.map(car => (
-                                <div key={car.id} className="car-card-admin">
-                                    <img src={car.image} alt={car.name} />
-                                    <div className="car-card-admin-content">
-                                        <h4>{car.name}</h4>
-                                        <p>{car.price}</p>
-                                    </div>
-                                    <div className="car-actions">
-                                        <button className="btn-icon" onClick={() => handleEdit(car)} aria-label={`Edit ${car.name}`}><EditIcon /></button>
-                                        <button className="btn-icon" onClick={() => handleDelete(car.id)} aria-label={`Delete ${car.name}`}><DeleteIcon /></button>
-                                    </div>
+                    <div className="car-grid-admin">
+                        {cars.map(car => (
+                            <div key={car.id} className="car-card-admin">
+                                <img src={car.image} alt={car.name} />
+                                <div className="car-card-admin-content">
+                                    <h4>{car.name}</h4>
+                                    <p>{car.price}</p>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                                <div className="car-actions">
+                                    <button className="btn-icon" onClick={() => handleEdit(car)} aria-label={`Edit ${car.name}`}><EditIcon /></button>
+                                    <button className="btn-icon" onClick={() => handleDelete(car.id)} aria-label={`Delete ${car.name}`}><DeleteIcon /></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

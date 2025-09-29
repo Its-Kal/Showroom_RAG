@@ -3,17 +3,19 @@ import { useParams } from 'react-router-dom';
 import CarDetail from '../components/CarDetail';
 import NotFoundPage from './NotFoundPage';
 import { CarDetailData } from '../types/Car';
+import { useLoading } from '../contexts/LoadingContext';
 
 const CarDetailPage = () => {
     const { carId } = useParams<{ carId: string }>();
     const [car, setCar] = useState<CarDetailData | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const { showLoading, hideLoading } = useLoading();
 
     useEffect(() => {
         if (!carId) return;
 
         const fetchCarData = async () => {
+            showLoading();
             try {
                 const response = await fetch(`http://localhost:8000/cars/${carId}`);
                 if (!response.ok) {
@@ -24,16 +26,12 @@ const CarDetailPage = () => {
             } catch (err) {
                 setError('Gagal memuat data mobil.');
             } finally {
-                setLoading(false);
+                hideLoading();
             }
         };
 
         fetchCarData();
     }, [carId]);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     if (error || !car) {
         return <NotFoundPage />;
@@ -41,7 +39,7 @@ const CarDetailPage = () => {
 
     return (
         <div>
-            <CarDetail car={car} />
+            {car && <CarDetail car={car} />}
         </div>
     );
 };

@@ -1,22 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './NotFoundPage.css';
 
 const NotFoundPage: React.FC = () => {
     React.useEffect(() => {
-        document.title = '404 - Page Not Found - My Website';
+        document.title = '404 - Halaman Tidak Ditemukan';
     }, []);
 
     return (
-        <div className="page not-found-page">
-            <h1>404 - Page Not Found</h1>
-            <section className="content">
-                <p>Oops! The page you are looking for doesn't exist.</p>
-                <p>
-                    <Link to="/" style={{ color: '#007bff', textDecoration: 'underline' }}>
-                        Go back to Home
-                    </Link>
-                </p>
-            </section>
+        <div className="not-found-page">
+            <img 
+                src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTBrZ3ZpZzZqY2l4c3k4c3pnaXg2c3o4c3JqY3k4c3ZqY3k4c3ZqYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/8L0Pky6C83SzkzU55a/giphy.gif" 
+                alt="Page Not Found GIF" 
+                className="not-found-gif"
+            />
+            <h1>Oops! Halaman Tidak Ditemukan</h1>
+            <p>Sepertinya Anda tersesat. Mari kami bantu Anda kembali ke jalan yang benar.</p>
+            <Link to="/" className="btn-home">
+                Kembali ke Beranda
+            </Link>
         </div>
     );
 };

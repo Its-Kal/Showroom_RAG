@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Car } from '../types/Car';
 import '../App.css';
+import { useLoading } from '../contexts/LoadingContext';
 
 const FeaturedCars = React.forwardRef<HTMLElement>((_, ref) => {
     const [cars, setCars] = useState<Car[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const { showLoading, hideLoading } = useLoading();
 
     useEffect(() => {
         const fetchCars = async () => {
+            showLoading();
             try {
                 const response = await fetch('http://localhost:8000/cars');
                 if (!response.ok) {
@@ -20,7 +22,7 @@ const FeaturedCars = React.forwardRef<HTMLElement>((_, ref) => {
             } catch (err) {
                 setError('Tidak dapat memuat mobil unggulan.');
             } finally {
-                setLoading(false);
+                hideLoading();
             }
         };
 
@@ -31,9 +33,8 @@ const FeaturedCars = React.forwardRef<HTMLElement>((_, ref) => {
         <section id="featured" className="featured-cars" ref={ref}>
             <h2>Mobil Unggulan Kami</h2>
             <div className="car-list">
-                {loading && <p>Memuat mobil...</p>}
                 {error && <p className="error">{error}</p>}
-                {!loading && !error && cars.map((car) => (
+                {cars.map((car) => (
                     <Link to={`/koleksi/${car.id}`} key={car.id} className="car-card">
                         <img src={car.image} alt={car.name} />
                         <h3>{car.name}</h3>
@@ -45,5 +46,3 @@ const FeaturedCars = React.forwardRef<HTMLElement>((_, ref) => {
         </section>
     );
 });
-
-export default FeaturedCars;
