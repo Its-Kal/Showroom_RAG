@@ -2,66 +2,24 @@ import React, { useState, useEffect } from 'react';
 import CarCard from './CarCard';
 import { Car } from '../types/Car';
 
-// ⚠️ HANYA UNTUK DEVELOPMENT — dummy data sementara
-// Nanti akan diganti dengan fetch dari API
-export const mockCars: Car[] = [
-    {
-        id: 1,
-        name: 'BMW 750Li xDrive',
-        year: '2024',
-        price: 'Rp 1.425.000.000',
-        // Gunakan 'image' (tunggal) untuk thumbnail
-        image: 'https://via.placeholder.com/400x300/00008B/FFFFFF?text=BMW+750Li',
-        category: 'luxury',
-        status: 'available',
-        acceleration: '0-100 km/h in 4.2s',
-        fuelConsumption: '10.2L/100km'
-    },
-    {
-        id: 2,
-        name: 'Mercedes-Benz GLS 580',
-        year: '2024',
-        price: 'Rp 1.650.000.000',
-        image: 'https://via.placeholder.com/400x300/E0E0E0/000000?text=Mercedes+GLS',
-        category: 'SUV',
-        status: 'available',
-        acceleration: '0-100 km/h in 4.9s',
-        fuelConsumption: '11.8L/100km'
-    },
-    {
-        id: 3,
-        name: 'Tesla Model S Plaid',
-        year: '2024',
-        price: 'Rp 2.025.000.000',
-        image: 'https://via.placeholder.com/400x300/DC143C/FFFFFF?text=Tesla+Model+S',
-        category: 'electric',
-        status: 'reserved',
-        acceleration: '0-100 km/h in 2.1s',
-        fuelConsumption: '0 L/100km'
-    }
-];
-
 const CollectionSection: React.FC = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('Semua');
 
-  // Simulasi fetch data dari backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Ganti ini dengan: const response = await fetch('/api/cars');
-        // const data: Car[] = await response.json();
-        
-        // Untuk sekarang, pakai mock data
-        setTimeout(() => {
-          setCars(mockCars);
-          setLoading(false);
-        }, 800); // simulasi delay
-
+        const response = await fetch('http://localhost:8000/cars');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data: Car[] = await response.json();
+        setCars(data);
       } catch (err) {
         setError('Gagal memuat data mobil.');
+      } finally {
         setLoading(false);
       }
     };
@@ -73,7 +31,7 @@ const CollectionSection: React.FC = () => {
     ? cars
     : cars.filter(car => car.category.toLowerCase() === filter.toLowerCase());
 
-  const categories = ['Semua', 'Mewah', 'SUV', 'Sport', 'Listrik'];
+  const categories = ['Semua', ...Array.from(new Set(cars.map(c => c.category)))];
 
   if (loading) {
     return <div className="collection-section"><p>Memuat koleksi mobil...</p></div>;
@@ -98,7 +56,7 @@ const CollectionSection: React.FC = () => {
             onClick={() => setFilter(cat)}
             className={filter === cat ? 'active' : ''}
           >
-            {cat} ({cars.filter(c => c.category.toLowerCase() === cat.toLowerCase()).length})
+            {cat} ({cat === 'Semua' ? cars.length : cars.filter(c => c.category === cat).length})
           </button>
         ))}
       </div>

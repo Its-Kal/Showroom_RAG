@@ -124,3 +124,196 @@ Buka `src/components/Header.tsx` dan tambahkan `<Link>` baru ke halaman tersebut
 create CarDetailPage.tsx
 create CarDetail.tsx
 change featuredCars.tsx
+
+---
+
+## Bab 6: Backend (FastAPI)
+
+Bagian ini menjelaskan arsitektur dan cara kerja backend API yang dibangun menggunakan FastAPI (Python).
+
+### Gambaran Umum
+Backend proyek ini berfungsi sebagai API (Application Programming Interface) yang menyediakan data dan layanan untuk aplikasi frontend (React). Dibangun dengan FastAPI, sebuah kerangka kerja web modern berperforma tinggi untuk Python.
+
+Tugas utamanya adalah:
+- Mengelola logika bisnis.
+- Berinteraksi dengan database (saat ini menggunakan data dummy dalam memori).
+- Menyediakan endpoint yang aman dan terdokumentasi untuk diakses oleh frontend.
+
+### Struktur File
+Berikut adalah struktur file di dalam direktori `backend/FastApi`:
+
+- **`main.py`**: File utama yang berisi seluruh logika API, termasuk inisialisasi aplikasi, definisi model data, dan semua endpoint.
+- **`requirements.txt`**: File teks yang mendaftar semua pustaka Python yang dibutuhkan oleh proyek. Ini memastikan bahwa setiap pengembang menggunakan versi dependensi yang sama.
+- **`venv/`**: Direktori yang berisi *virtual environment* Python. Ini adalah lingkungan terisolasi tempat semua dependensi proyek diinstal, mencegah konflik dengan proyek Python lain di sistem Anda.
+
+### Penyiapan & Instalasi
+Untuk menjalankan backend, Anda perlu menyiapkan lingkungan Python dan menginstal dependensi yang diperlukan.
+
+**Langkah 1: Buka Terminal**
+Buka terminal atau command prompt pilihan Anda.
+
+**Langkah 2: Navigasi ke Direktori Backend**
+Pindah ke direktori tempat backend berada.
+```bash
+cd c:\uas_showroom\backend\FastApi
+```
+
+**Langkah 3: Aktifkan Virtual Environment**
+Setiap kali Anda ingin mengerjakan backend, Anda harus mengaktifkan *virtual environment* terlebih dahulu.
+```bash
+virtualenv\Scripts\activate
+```
+Setelah aktif, nama prompt di terminal Anda akan diawali dengan `(venv)`.
+
+**Langkah 4: Instal Dependensi**
+Gunakan `pip` untuk menginstal semua pustaka yang tercantum di `requirements.txt`.
+```bash
+pip install -r requirements.txt
+```
+Perintah ini akan menginstal `fastapi`, `uvicorn`, `pydantic`, dan pustaka lainnya secara otomatis.
+
+### Menjalankan Server
+Setelah dependensi terinstal, Anda dapat menjalankan server pengembangan.
+
+```bash
+uvicorn main:app --reload
+```
+- **`uvicorn`**: Perintah untuk menjalankan server ASGI (Asynchronous Server Gateway Interface).
+- **`main:app`**: Memberi tahu `uvicorn` untuk mencari objek bernama `app` di dalam file `main.py`.
+- **`--reload`**: Opsi ini membuat server secara otomatis me-restart setiap kali Anda menyimpan perubahan pada kode. Sangat berguna selama pengembangan.
+
+Server akan berjalan dan dapat diakses di **`http://127.0.0.1:8000`**.
+
+### Endpoint API
+FastAPI secara otomatis menghasilkan dokumentasi interaktif untuk semua endpoint. Anda dapat mengaksesnya melalui browser di:
+- **Swagger UI**: `http://127.0.0.1:8000/docs`
+- **ReDoc**: `http://127.0.0.1:8000/redoc`
+
+Berikut adalah daftar endpoint yang tersedia:
+
+#### `GET /`
+- **Deskripsi**: Endpoint root yang memberikan pesan selamat datang. Berguna untuk memeriksa apakah server berjalan dengan benar.
+- **Contoh Respons**:
+  ```json
+  {
+    "message": "Welcome to the UAS Showroom API"
+  }
+  ```
+
+#### `POST /login`
+- **Deskripsi**: Mengotentikasi pengguna berdasarkan username dan password. Saat ini menggunakan data dummy.
+- **Body Permintaan**:
+  ```json
+  {
+    "username": "user1",
+    "password": "password123"
+  }
+  ```
+- **Respons Sukses (200)**:
+  ```json
+  {
+    "message": "Welcome John Doe! Login successful."
+  }
+  ```
+- **Respons Gagal (401)**:
+  ```json
+  {
+    "detail": "Incorrect username or password"
+  }
+  ```
+
+#### `GET /items/{item_id}`
+- **Deskripsi**: Mengambil detail item (mobil) berdasarkan ID-nya.
+- **Parameter Path**:
+  - `item_id` (integer): ID unik dari item yang ingin diambil.
+- **Respons Sukses (200)**:
+  ```json
+  {
+    "name": "Nama Mobil",
+    "description": "Deskripsi mobil.",
+    "price": 50000,
+    "tax": 5000
+  }
+  ```
+- **Respons Gagal (404)**:
+  ```json
+  {
+    "detail": "Item not found"
+  }
+  ```
+
+#### `POST /items/`
+- **Deskripsi**: Membuat item (mobil) baru.
+- **Body Permintaan**:
+  ```json
+  {
+    "name": "Mobil Baru",
+    "description": "Deskripsi mobil baru.",
+    "price": 75000,
+    "tax": 7500
+  }
+  ```
+- **Respons Sukses (200)**: Mengembalikan objek item yang baru saja dibuat.
+  ```json
+  {
+    "name": "Mobil Baru",
+    "description": "Deskripsi mobil baru.",
+    "price": 75000,
+    "tax": 7500
+  }
+  ```
+
+## Bab 7: Fitur Utama & Alur Kerja (Update Terbaru)
+
+Bagian ini merinci pembaruan besar yang memindahkan logika data ke backend dan memperkenalkan fungsionalitas admin.
+
+### 1. Arsitektur Backend Baru: Manajemen Data Mobil
+
+Sebelumnya, data mobil disimpan langsung di dalam komponen frontend (hardcoded). Ini telah diubah secara fundamental.
+
+- **Sumber Data Tunggal**: File baru `backend/FastApi/cars.json` sekarang menjadi satu-satunya sumber kebenaran (single source of truth) untuk semua data mobil.
+- **Pemuatan Data**: Saat server FastAPI dimulai, server akan membaca `cars.json` dan memuat datanya ke dalam memori, divalidasi menggunakan model Pydantic `Car`.
+- **Penyimpanan Data**: Setiap kali ada perubahan pada data mobil (membuat, memperbarui, atau menghapus), perubahan tersebut akan langsung disimpan kembali ke file `cars.json`, memastikan persistensi data antar sesi server.
+
+### 2. API CRUD Penuh untuk Mobil
+
+Untuk mendukung manajemen data terpusat, serangkaian endpoint API baru telah dibuat. Endpoint `/items/...` yang lama telah digantikan oleh `/cars/...`.
+
+- **`GET /cars`**: Mengembalikan daftar semua mobil yang ada di `cars.json`.
+- **`GET /cars/{car_id}`**: Mengembalikan detail lengkap dari satu mobil berdasarkan `id`-nya.
+- **`POST /upload_car`**: Endpoint multifungsi untuk membuat mobil baru.
+  - Menerima data mobil (nama, harga, deskripsi) dan file PDF melalui `multipart/form-data`.
+  - Membuat entri mobil baru di `cars.json`.
+  - Meneruskan file PDF yang diunggah ke webhook eksternal.
+- **`PUT /cars/{car_id}`**: Memperbarui informasi mobil yang ada. Menerima data formulir dan memperbarui entri yang sesuai di `cars.json`.
+- **`DELETE /cars/{car_id}`**: Menghapus mobil dari `cars.json` berdasarkan `id`-nya.
+
+### 3. Dasbor Admin Fungsional (Frontend)
+
+Halaman `/admin` telah dibuat sebagai pusat kendali untuk mengelola data mobil.
+
+- **Alur Login**: Tombol "Konsultasi AI" di header telah diganti dengan tombol "Login Admin". Tombol ini mengarahkan pengguna ke halaman `/login`. Setelah login berhasil, pengguna secara otomatis diarahkan ke `/admin`.
+- **Antarmuka CRUD**: Dasbor admin kini memiliki antarmuka penuh untuk operasi CRUD:
+  - **Create**: Formulir di sisi kiri memungkinkan admin untuk menambahkan mobil baru.
+  - **Read**: Semua mobil yang ada ditampilkan dalam tata letak kartu yang bersih dan modern di sisi kanan.
+  - **Update**: Tombol "Edit" pada setiap kartu mobil akan mengisi formulir dengan data mobil tersebut, memungkinkan admin untuk memperbaruinya.
+  - **Delete**: Tombol "Hapus" pada setiap kartu akan memicu permintaan penghapusan setelah konfirmasi.
+- **Desain Human-Centered**: Tampilan dasbor telah dirancang ulang dengan fokus pada pengalaman pengguna. Ini mencakup tata letak dua kolom yang jelas, penggunaan kartu untuk visualisasi data, ikon yang intuitif, dan umpan balik (pesan sukses/error) yang jelas.
+
+### 4. Refactoring Komponen Frontend
+
+Sebagai hasil dari pemindahan data ke backend, semua komponen frontend yang sebelumnya menggunakan data dummy lokal kini telah di-refactor:
+
+- **`CollectionSection.tsx`**, **`CarDetailPage.tsx`**, dan **`FeaturedCars.tsx`** sekarang mengambil data yang mereka butuhkan dengan melakukan panggilan `fetch` ke endpoint API backend yang sesuai (`/cars` atau `/cars/{car_id}`).
+- Komponen-komponen ini sekarang juga menangani status `loading` dan `error` mereka sendiri, memberikan umpan balik kepada pengguna saat data sedang dimuat atau jika terjadi masalah.
+
+### 5. Alur Otentikasi & Header Dinamis
+
+Untuk meningkatkan pengalaman pengguna dan keamanan, alur otentikasi yang lebih canggih telah diimplementasikan.
+
+- **Manajemen State Terpusat**: Komponen `App.tsx` sekarang bertanggung jawab untuk mengelola status login pengguna (`isLoggedIn`). Status ini disimpan di `sessionStorage` browser, yang memungkinkannya tetap ada (persisten) bahkan setelah pengguna me-refresh halaman, tetapi akan hilang ketika tab browser ditutup.
+- **Header yang Adaptif**: Komponen `Header.tsx` sekarang menerima status login dari `App.tsx`. Tampilannya berubah secara dinamis:
+  - **Jika Pengguna Login**: Tombol "Login Admin" berubah menjadi tombol "Keluar". Link navigasi "Admin" juga muncul di menu utama.
+  - **Jika Pengguna Logout**: Tombol "Login Admin" ditampilkan.
+  - **Di Halaman Login**: Jika pengguna belum login dan sedang berada di halaman `/login`, tombol login diganti dengan sapaan "Haloo" untuk memberikan konteks bahwa pengguna sudah berada di tempat yang tepat.
+- **Rute Terlindungi**: Rute `/admin` sekarang dilindungi. Jika pengguna yang belum login mencoba mengaksesnya secara langsung, mereka akan secara otomatis dialihkan ke halaman `/login`.

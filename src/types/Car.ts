@@ -8,6 +8,7 @@ export interface Car {
     year: string;
     price: string;
     image: string; // Gambar utama (thumbnail)
+    description: string;
     category: CarCategory;
     status: CarStatus;
     acceleration: string;
