@@ -317,3 +317,50 @@ Untuk meningkatkan pengalaman pengguna dan keamanan, alur otentikasi yang lebih 
   - **Jika Pengguna Logout**: Tombol "Login Admin" ditampilkan.
   - **Di Halaman Login**: Jika pengguna belum login dan sedang berada di halaman `/login`, tombol login diganti dengan sapaan "Haloo" untuk memberikan konteks bahwa pengguna sudah berada di tempat yang tepat.
 - **Rute Terlindungi**: Rute `/admin` sekarang dilindungi. Jika pengguna yang belum login mencoba mengaksesnya secara langsung, mereka akan secara otomatis dialihkan ke halaman `/login`.
+
+---
+
+## Bab 8: Koneksi Frontend & Backend
+
+Bagian ini menjelaskan bagaimana aplikasi frontend (React) berkomunikasi dengan backend (FastAPI) untuk menampilkan dan mengelola data.
+
+### Arsitektur Terpisah (Decoupled)
+Proyek ini menggunakan arsitektur terpisah, yang berarti frontend dan backend adalah dua aplikasi yang independen:
+- **Frontend (React)**: Bertanggung jawab atas semua yang dilihat dan diinteraksikan oleh pengguna di browser. Berjalan di `http://localhost:3000`.
+- **Backend (FastAPI)**: Bertanggung jawab untuk menyediakan data, mengelola logika bisnis, dan berinteraksi dengan database (file `cars.json`). Berjalan di `http://localhost:8000`.
+
+Pemisahan ini memungkinkan pengembangan dan penskalaan yang independen antara antarmuka pengguna dan logika server.
+
+### Mekanisme Komunikasi
+Komunikasi antara keduanya terjadi melalui **permintaan HTTP**, khususnya menggunakan REST API.
+
+1.  **Permintaan dari Frontend**: Ketika frontend perlu menampilkan atau memodifikasi data (misalnya, menampilkan daftar mobil), ia menggunakan fungsi `fetch` yang disediakan oleh browser untuk mengirim permintaan HTTP ke alamat backend.
+    ```typescript
+    // Contoh di dalam komponen React (misalnya, CollectionSection.tsx)
+    const response = await fetch('http://localhost:8000/cars');
+    const data = await response.json();
+    // 'data' sekarang berisi array objek mobil dari backend
+    ```
+
+2.  **Pemrosesan oleh Backend**: Backend FastAPI selalu "mendengarkan" permintaan yang masuk. Ketika permintaan untuk `/cars` diterima, fungsi yang terkait (`get_cars` di `main.py`) dieksekusi. Fungsi ini membaca `cars.json`, mengubahnya menjadi format JSON, dan mengirimkannya kembali sebagai respons HTTP.
+
+3.  **Pentingnya CORS (Cross-Origin Resource Sharing)**: Secara default, browser menerapkan kebijakan keamanan yang melarang halaman web (`http://localhost:3000`) untuk membuat permintaan ke domain atau port yang berbeda (`http://localhost:8000`). Untuk mengatasi ini, backend FastAPI menggunakan `CORSMiddleware`. Konfigurasi ini secara eksplisit memberi tahu browser bahwa permintaan dari `http://localhost:3000` aman dan diizinkan.
+    ```python
+    # Di dalam backend/FastApi/main.py
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:3000", ...], # Mengizinkan frontend
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    ```
+
+### Contoh Alur Kerja: Menampilkan Detail Mobil
+1.  **Pengguna**: Mengklik sebuah mobil di halaman koleksi. URL di browser berubah menjadi `/cars/1`.
+2.  **Frontend (React)**: Komponen `CarDetailPage.tsx` dirender. Komponen ini mengambil `carId` (yaitu `1`) dari URL.
+3.  **Frontend (React)**: `useEffect` di dalam `CarDetailPage.tsx` dieksekusi, yang memicu panggilan `fetch` ke backend: `fetch('http://localhost:8000/cars/1')`.
+4.  **Backend (FastAPI)**: Menerima permintaan `GET` di endpoint `/cars/{car_id}`.
+5.  **Backend (FastAPI)**: Mencari mobil dengan `id: 1` di dalam `cars.json`.
+6.  **Backend (FastAPI)**: Mengirimkan kembali data mobil yang ditemukan sebagai respons JSON.
+7.  **Frontend (React)**: Menerima respons, menyimpannya dalam *state*, dan memperbarui UI untuk menampilkan detail mobil yang sesuai.
