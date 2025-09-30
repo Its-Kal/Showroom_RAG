@@ -27,7 +27,7 @@ body {
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color:#f9fafb;
+    background-color:#FFF9F3;
     color: #111827;
     line-height: 1.6;
 }
@@ -56,8 +56,8 @@ body {
     align-items: center;
     padding: 1.25rem 2rem;
     background: transparent;
-    background-color: rgba(15, 23, 42, 0.5); /* Warna footer semi-transparan */
-    color: white;
+    background-color: rgba(15, 23, 42, 0.5);
+    color: #FFF9F3;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -66,10 +66,10 @@ body {
 }
 
 .header.scrolled {
-    background: rgba(15, 23, 42, 0.85);
+    background-color: rgba(15, 23, 42, 0.85); /* Warna biru tua semi-transparan */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    background-color: rgba(15, 23, 42, 0.9); /* Lebih pekat saat di-scroll */
+    color: #FFF9F3; /* Warna teks kembali terang */
     padding: 1rem 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -84,7 +84,7 @@ body {
 
 .logo a {
     text-decoration: none;
-    color: white;
+    color: #FFF9F3;
     display: block;
     line-height: 1.2;
 }
@@ -115,7 +115,7 @@ body {
 }
 
 .nav-links a {
-    color: white;
+    color: #FFF9F3;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease, opacity 0.3s ease;
@@ -138,13 +138,14 @@ body {
 
 .nav-links a:hover,
 .nav-links a.active {
-    color: white;
+    color: inherit; /* Mewarisi warna dari parent (.header atau .header.scrolled) */
     opacity: 1;
 }
 
 .nav-links a:hover::after,
 .nav-links a.active::after {
     width: 100%;
+    width: 80%; /* Sedikit lebih pendek untuk estetika */
 }
 
 .nav-actions {
@@ -155,8 +156,8 @@ body {
 
 .consult-btn {
     background: transparent;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid #FFF9F3;
+    color: #FFF9F3;
     padding: 0.6rem 1.2rem;
     border-radius: 50px;
     cursor: pointer;
@@ -170,7 +171,7 @@ body {
 }
 
 .consult-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 249, 243, 0.1);
     transform: translateY(-2px);
 }
 
@@ -194,7 +195,7 @@ body {
     display: none;
     background: transparent;
     border: none;
-    color: white;
+    color: #FFF9F3;
     cursor: pointer;
     padding: 0.5rem;
     z-index: 1001;
@@ -281,7 +282,7 @@ body {
 
 .hero-content {
     text-align: center;
-    color: white;
+    color: #FFF9F3;
     z-index: 2;
     max-width: 800px;
     padding: 2rem;
@@ -307,33 +308,32 @@ body {
 }
 
 .btn-primary {
-    background: white;
-    color: #0f172a;
-    padding: 0.75rem 2rem;
-    border: none;
+    background-color:#FFF9F3;
+    padding: 0.6rem 1.2rem; /* Disesuaikan agar sama dengan .consult-btn */
+    border: 1px solid #FFF9F3; /* Disesuaikan agar sama dengan .consult-btn */
     border-radius: 50px;
-    font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s ease;
     font-weight: 600;
+    font-size: 0.9rem; /* Disesuaikan agar sama dengan .consult-btn */
 }
 
 .btn-primary:hover {
-    background: #e5e7eb;
+    background: rgba(255, 249, 243, 0.1); /* Disesuaikan agar sama dengan .consult-btn */
     transform: translateY(-2px);
 }
 
 .btn-secondary {
     background: transparent;
-    color: white;
-    padding: 0.75rem 2rem;
-    border: 1px solid white;
+    color: #FFF9F3;
+    border: 1px solid #FFF9F3;    padding: 0.6rem 1.2rem;
     border-radius: 50px;
-    font-size: 1rem;
     cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -341,7 +341,7 @@ body {
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 249, 243, 0.1);
     backdrop-filter: blur(2px);
 }
 
@@ -350,7 +350,7 @@ body {
 
 .collection-section {
     padding: 4rem 2rem;
-    background-color: #f9fafb;
+    background-color: #FFF9F3;
 }
 
 .collection-header {
@@ -385,7 +385,7 @@ body {
 }
 
 .filters button {
-    background: white;
+    background: #FFF9F3;
     border: 1px solid #d1d5db;
     color: #111827;
     padding: 0.5rem 1rem;
@@ -403,7 +403,7 @@ body {
 
 .filters button.active {
     background: #334155; /* Warna abu-abu maskulin (sama seperti Lihat Detail) */
-    color: white;
+    color: #FFF9F3;
     border-color: #334155;
 }
 
@@ -418,7 +418,7 @@ body {
 
 /* Mengubah CarCard menjadi lebih modern dan elegan */
 .car-card {
-  background-color: #ffffff;
+  background-color: #FFF9F3;
   border-radius: 16px; /* Sudut lebih tumpul */
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow lebih halus */
@@ -462,7 +462,7 @@ body {
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: white;
+  color: #FFF9F3;
   background: rgba(22, 163, 74, 0.8); /* Warna hijau untuk status 'Tersedia' */
   backdrop-filter: blur(5px);
 }
@@ -559,7 +559,7 @@ body {
 .section-header h2 {
     font-size: 2.8rem;
     margin-bottom: 1rem;
-    color: #ffffff;
+    color: #FFF9F3;
     font-weight: 800;
 }
 
@@ -596,7 +596,7 @@ body {
     padding: 2rem;
     box-shadow: var(--shadow-elevated);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 249, 243, 0.1);
     scroll-snap-align: center; /* Kartu akan berhenti di tengah saat scroll */
     display: flex;
     flex-direction: column;
@@ -617,7 +617,7 @@ body {
 
 .testimonial-header h4 {
     font-size: 1.1rem;
-    color: #ffffff;
+    color: #FFF9F3;
     font-weight: 600;
 }
 
@@ -711,7 +711,7 @@ body {
 .column h4 {
     font-size: 1.1rem;
     margin-bottom: 1rem;
-    color: #ffffff;
+    color: #FFF9F3;
 }
 
 .column ul {
@@ -744,13 +744,13 @@ body {
     border: 1px solid #475569;
     border-radius: 50px;
     background: #1e293b;
-    color: white;
+    color: #FFF9F3;
     font-size: 0.9rem;
 }
 
 .newsletter-form button {
     background: #007bff;
-    color: white;
+    color: #FFF9F3;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 50px;
@@ -800,7 +800,7 @@ body {
     max-width: 1200px;
     margin: 4rem auto; /* Memberi jarak dari header dan footer */
     padding: 2rem;
-    background-color: #ffffff;
+    background-color: #FFF9F3;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: grid;
@@ -928,7 +928,7 @@ body {
 
 .car-detail-actions .btn-primary {
     background-color: var(--premium-blue);
-    color: white;
+    color: #FFF9F3;
     border: none;
 }
 
