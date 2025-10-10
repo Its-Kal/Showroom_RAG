@@ -1,24 +1,48 @@
 from typing import List
-from models.car_model import Car, UpdateCar
+from sqlmodel import Session, select
+from models.car_model import Car, CarCreate, CarUpdate
 
-# Functions will be implemented after Supabase connection is established.
+def get_all_cars(session: Session) -> List[Car]:
+    """Fetches all cars from the database."""
+    return session.exec(select(Car)).all()
 
-def get_all_cars() -> List[Car]:
-    # Supabase logic to get all cars
-    pass
+def find_car_by_id(session: Session, car_id: int) -> Car | None:
+    """Finds a car by its ID."""
+    return session.get(Car, car_id)
 
-def find_car_by_id(car_id: int) -> Car | None:
-    # Supabase logic to find a car by id
-    pass
+def add_car(session: Session, car_create: CarCreate) -> Car:
+    """Adds a new car to the database."""
+    # Create a new Car instance from the CarCreate model
+    db_car = Car.model_validate(car_create)
+    session.add(db_car)
+    session.commit()
+    session.refresh(db_car)
+    return db_car
 
-def add_car(car: Car):
-    # Supabase logic to add a new car
-    pass
+def update_car_in_db(session: Session, car_id: int, car_update: CarUpdate) -> Car | None:
+    """Updates an existing car in the database."""
+    db_car = session.get(Car, car_id)
+    if not db_car:
+        return None
 
-def update_car_in_db(car_id: int, car_update: UpdateCar) -> Car | None:
-    # Supabase logic to update a car
-    pass
+    # Get the update data, excluding unset fields to avoid overwriting with None
+    update_data = car_update.model_dump(exclude_unset=True)
+    
+    # Update the model fields
+    for key, value in update_data.items():
+        setattr(db_car, key, value)
+    
+    session.add(db_car)
+    session.commit()
+    session.refresh(db_car)
+    return db_car
 
-def delete_car_from_db(car_id: int) -> bool:
-    # Supabase logic to delete a car
-    pass
+def delete_car_from_db(session: Session, car_id: int) -> bool:
+    """Deletes a car from the database."""
+    db_car = session.get(Car, car_id)
+    if not db_car:
+        return False
+    
+    session.delete(db_car)
+    session.commit()
+    return True

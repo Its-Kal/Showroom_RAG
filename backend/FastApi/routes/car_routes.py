@@ -1,42 +1,48 @@
-from fastapi import APIRouter, Form, UploadFile, File, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
+from sqlmodel import Session
 
-from models.car_model import Car, UpdateCar
-import controllers.car_controller as car_controller
+from database.config import SessionDep
+from models.car_model import CarRead, CarCreate, CarUpdate
+import repositories.car_repository as car_repo
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/cars",
+    tags=["Cars"],
+)
 
-@router.get("/cars", response_model=List[Car])
-def get_cars():
-    return car_controller.get_all_cars()
+@router.get("/", response_model=List[CarRead])
+def get_cars(session: SessionDep):
+    """Retrieve all cars."""
+    return car_repo.get_all_cars(session=session)
 
-@router.get("/cars/{car_id}", response_model=Car)
-def get_car(car_id: int):
-    return car_controller.get_car_by_id(car_id)
+@router.get("/{car_id}", response_model=CarRead)
+def get_car(car_id: int, session: SessionDep):
+    """Retrieve a single car by its ID."""
+    car = car_repo.find_car_by_id(session=session, car_id=car_id)
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    return car
 
-@router.post("/upload_car")
-async def upload_car(
-    car_name: str = Form(...),
-    car_price: str = Form(...),
-    car_desc: str = Form(...),
-    pdf_file: UploadFile = File(...)
-):
-    return await car_controller.create_new_car(car_name, car_price, car_desc, pdf_file)
+@router.post("/", response_model=CarRead, status_code=201)
+def create_car(car: CarCreate, session: SessionDep):
+    """Create a new car."""
+    return car_repo.add_car(session=session, car_create=car)
 
-@router.put("/cars/{car_id}", response_model=Car)
-async def update_car_details(
-    car_id: int,
-    car_update: UpdateCar = Depends()
-):
-    # This is a simplified way to handle the update. 
-    # In a real application, you might want to pass the form data directly to the controller.
-    car_update_data = UpdateCar(
-        name=car_update.name,
-        price=car_update.price,
-        description=car_update.description
+@router.put("/{car_id}", response_model=CarRead)
+def update_car(car_id: int, car_update: CarUpdate, session: SessionDep):
+    """Update an existing car."""
+    updated_car = car_repo.update_car_in_db(
+        session=session, car_id=car_id, car_update=car_update
     )
-    return car_controller.update_existing_car(car_id, car_update_data)
+    if not updated_car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    return updated_car
 
-@router.delete("/cars/{car_id}")
-def delete_car(car_id: int):
-    return car_controller.delete_existing_car(car_id)
+@router.delete("/{car_id}")
+def delete_car(car_id: int, session: SessionDep):
+    """Delete a car."""
+    success = car_repo.delete_car_from_db(session=session, car_id=car_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Car not found")
+    return {"message": "Car deleted successfully"}

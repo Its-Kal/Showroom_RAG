@@ -1,42 +1,34 @@
-# di dalam file database/config.py
+# In database/config.py
 import os
-from typing import Annotated  # <-- PENTING
+from typing import Annotated
 from dotenv import load_dotenv
-from supabase import create_client, Client
-
-# Sesuaikan import ini dengan library yang kamu pakai (SQLModel atau SQLAlchemy)
 from sqlmodel import create_engine, Session, SQLModel
-from fastapi import Depends  # <-- PENTING
+from fastapi import Depends
 
 load_dotenv()
 
-# --- Bagian Klien Supabase (sudah benar) ---
-supabase_url: str = os.environ.get("SUPABASE_URL")
-supabase_key: str = os.environ.get("SUPABASE_KEY")
-supabase: Client = create_client(supabase_url, supabase_key)
-
-def get_supabase_client():
-    return supabase
-
-# --- Bagian Koneksi Database (YANG PERLU DITAMBAHKAN) ---
-# Pastikan kamu punya DATABASE_URL di file .env-mu juga
-# Formatnya: "postgresql://user:password@host:port/dbname"
+# --- Database Connection Setup ---
+# Make sure you have DATABASE_URL in your .env file
+# Format: "postgresql://user:password@host:port/dbname"
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# 1. Buat Engine
-# Opsi connect_args ini penting untuk SQLite, tapi bisa di-disable untuk PostgreSQL
+if not DATABASE_URL:
+    raise ValueError("No DATABASE_URL environment variable set")
+
+# 1. Create the Engine
+# The `echo=True` will log SQL statements, which is useful for debugging.
 engine = create_engine(DATABASE_URL, echo=True)
 
-# 2. Buat fungsi untuk menyediakan sesi
+# 2. Function to provide a database session
 def get_session():
     with Session(engine) as session:
         yield session
 
-# 3. BUAT DEFINISI 'SessionDep' YANG HILANG
+# 3. Dependency for getting a session
 SessionDep = Annotated[Session, Depends(get_session)]
 
-# 4. Fungsi untuk membuat tabel (sudah kamu buat)
+# 4. Function to create database and tables
 def create_db_and_tables():
-    # Gunakan SQLModel untuk membuat semua tabel
+    """Creates all database tables based on SQLModel metadata."""
     SQLModel.metadata.create_all(engine)
-    print("Database dan tabel berhasil dibuat.")
+    print("Database and tables created successfully.")
