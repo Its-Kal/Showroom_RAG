@@ -23,7 +23,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      // Header akan berubah setelah scroll melewati tinggi viewport (tinggi hero section)
+      // Diberi sedikit toleransi (misal: 100px) agar transisi tidak terlalu mendadak
+      setIsScrolled(window.scrollY > window.innerHeight - 100);
     };
     window.addEventListener('scroll', handleScroll);
     return () => {
@@ -57,7 +59,11 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
   };
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+    <nav
+      className={`header ${
+        location.pathname !== '/' || isScrolled ? 'scrolled' : ''
+      }`}
+    >
       <div className="nav-container">
         <div className="logo">
           <Link to="/" onClick={closeMenu}>
@@ -84,7 +90,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
           </button>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 

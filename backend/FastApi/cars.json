@@ -62,9 +62,23 @@
   },
   {
     "id": 4,
+    "name": "JIMMY",
+    "year": "2024",
+    "price": "Rp 2.476.000.000",
+    "image": "https://via.placeholder.com/400x300/808080/FFFFFF?text=JIMMY",
+    "category": "new",
+    "status": "available",
+    "acceleration": "N/A",
+    "fuelConsumption": "N/A",
+    "description": "JIMMY",
+    "images": [],
+    "specifications": {}
+  },
+  {
+    "id": 5,
     "name": "BMW",
     "year": "2024",
-    "price": "12te",
+    "price": "Rp 1.200.000.000",
     "image": "https://via.placeholder.com/400x300/808080/FFFFFF?text=BMW",
     "category": "new",
     "status": "available",
@@ -75,16 +89,16 @@
     "specifications": {}
   },
   {
-    "id": 5,
+    "id": 6,
     "name": "Tesla",
     "year": "2024",
-    "price": "12412",
+    "price": "Rp 1.241.200.000",
     "image": "https://via.placeholder.com/400x300/808080/FFFFFF?text=Tesla",
     "category": "new",
     "status": "available",
     "acceleration": "N/A",
     "fuelConsumption": "N/A",
-    "description": "Tedst",
+    "description": "Test",
     "images": [],
     "specifications": {}
   }

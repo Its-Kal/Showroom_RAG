@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, status, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
-import json
+import json 
 from typing import List, Dict, Any, Optional
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from dotenv import load_dotenv
@@ -37,14 +37,15 @@ class Car(BaseModel):
     specifications: Dict[str, str]
 
 class UpdateCar(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str] = None 
     year: Optional[str] = None
     price: Optional[str] = None
     category: Optional[str] = None
     status: Optional[str] = None
     acceleration: Optional[str] = None
     fuelConsumption: Optional[str] = None
-    description: Optional[str] = None
+    description: Optional[str] = None 
+
 
 # --- App Initialization ---
 @asynccontextmanager
@@ -59,7 +60,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-]
+] 
 
 app.add_middleware(
     CORSMiddleware,
@@ -114,14 +115,14 @@ def get_car(car_id: int):
     if not car:
         
         raise HTTPException(status_code=404, detail="Car not found")
-    return car
+    return car 
 
 @app.post("/upload_car")
 async def upload_car(
     car_name: str = Form(...),
     car_price: str = Form(...),
     car_desc: str = Form(...),
-    pdf_file: UploadFile = File(...)
+    pdf_file: UploadFile = File(...) 
 ):
     webhook_url = "" # Please provide the correct webhook URL
     new_id = max((car.id for car in car_db), default=0) + 1
@@ -149,10 +150,10 @@ async def upload_car(
 
 @app.put("/cars/{car_id}", response_model=Car)
 async def update_car_details(
-    car_id: int,
+    car_id: int, 
     car_name: str = Form(...),
     car_price: str = Form(...),
-    car_desc: str = Form(...)
+    car_desc: str = Form(...) 
 ):
     car_index = next((i for i, car in enumerate(car_db) if car.id == car_id), -1)
     if car_index == -1:
