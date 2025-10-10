@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import Hero from '../components/Hero';
 import CollectionSection from '../components/CollectionSection';
-import TestimonialSection from '../components/TestimonialSection';  
+import TestimonialSection from '../components/TestimonialSection';
 
 const HomePage: React.FC = () => {
   const featuredRef = useRef<HTMLDivElement>(null);
