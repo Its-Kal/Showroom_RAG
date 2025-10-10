@@ -59,5 +59,19 @@
       "transmission": "1-Speed Automatic",
       "fuel": "Listrik"
     }
+  },
+  {
+    "id": 4,
+    "name": "JIMMY ",
+    "year": "2024",
+    "price": "2.476.000.000",
+    "image": "https://via.placeholder.com/400x300/808080/FFFFFF?text=JIMMY+",
+    "category": "new",
+    "status": "available",
+    "acceleration": "N/A",
+    "fuelConsumption": "N/A",
+    "description": "JIMMY ",
+    "images": [],
+    "specifications": {}
   }
 ]

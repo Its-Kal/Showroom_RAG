@@ -124,7 +124,7 @@ const AdminDashboard: React.FC = () => {
                         <div className="form-group">
                             <label htmlFor="car_price">Car Price</label>
                             <input type="text" id="car_price" value={carPrice} onChange={(e) => setCarPrice(e.target.value)} required />
-                        </div>
+                        </div> 
                         <div className="form-group">
                             <label htmlFor="car_desc">Car Description</label>
                             <textarea id="car_desc" value={carDesc} onChange={(e) => setCarDesc(e.target.value)} required />
