@@ -4,8 +4,20 @@ from pydantic import BaseModel
 import requests
 import json
 from typing import List, Dict, Any, Optional
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from dotenv import load_dotenv
+from contextlib import asynccontextmanager
+load_dotenv()
+
+from database.config import create_db_and_tables, SessionDep
 
 # --- Models ---
+class UserModel(SQLModel, table=True):
+    __tablename__ = "users"
+    id: int = Field(default=None, primary_key=True)
+    username: str
+    password: str
+
 class User(BaseModel):
     username: str
     password: str
@@ -35,6 +47,11 @@ class UpdateCar(BaseModel):
     description: Optional[str] = None
 
 # --- App Initialization ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+
 app = FastAPI()
 
 # --- CORS Configuration ---
@@ -81,6 +98,11 @@ dummy_users_db = {
 def read_root():
     return {"message": "Welcome to the UAS Showroom API"}
 
+@app.get("/dimas")
+def read_root(session: SessionDep):
+    data = session.exec(select(UserModel)).all()
+    return data
+
 # --- Car Endpoints ---
 @app.get("/cars", response_model=List[Car])
 def get_cars():
@@ -90,6 +112,7 @@ def get_cars():
 def get_car(car_id: int):
     car = next((car for car in car_db if car.id == car_id), None)
     if not car:
+        
         raise HTTPException(status_code=404, detail="Car not found")
     return car
 
@@ -100,8 +123,7 @@ async def upload_car(
     car_desc: str = Form(...),
     pdf_file: UploadFile = File(...)
 ):
-    webhook_url = "https://n8n-mihwklraj3fx.bgxy.sumopod.my.id/webhook/695c96d2-7257-4180-896a-d955a3a7326f"
-
+    webhook_url = "" # Please provide the correct webhook URL
     new_id = max((car.id for car in car_db), default=0) + 1
     new_car = Car(
         id=new_id,
