@@ -46,7 +46,7 @@ File-file ini bertanggung jawab untuk memulai dan menstrukturkan aplikasi React.
 
 ### `src/App.css`
 - **Apa itu?** File CSS utama untuk komponen-komponen aplikasi.
-- **Cara Kerjanya:** Diimpor ke dalam `App.tsx` dan berisi sebagian besar styling untuk proyek ini, seperti gaya untuk header, kartu mobil, footer, dll. Kelas CSS yang didefinisikan di sini dapat digunakan oleh komponen mana pun yang merupakan bagian dari `App`.
+- **Cara Kerjanya:** Diimpor ke dalam `App.tsx` dan berisi sebagian besar styling untuk proyek ini, seperti gaya untuk header, kartu mobil, footer, dll. Kelas CSS yang didefinisikan di sini dapat digunakan oleh komponen mana pun yang merupakan bagian dari `App`. 
 
 ---
 
@@ -132,12 +132,12 @@ change featuredCars.tsx
 Bagian ini menjelaskan arsitektur dan cara kerja backend API yang dibangun menggunakan FastAPI (Python).
 
 ### Gambaran Umum
-Backend proyek ini berfungsi sebagai API (Application Programming Interface) yang menyediakan data dan layanan untuk aplikasi frontend (React). Dibangun dengan FastAPI, sebuah kerangka kerja web modern berperforma tinggi untuk Python.
+Backend proyek ini berfungsi sebagai API (Application Programming Interface) yang menyediakan data dan layanan untuk aplikasi frontend (React). Dibangun dengan FastAPI, sebuah kerangka kerja web modern berperforma tinggi untuk Python. 
 
 Tugas utamanya adalah:
 - Mengelola logika bisnis.
 - Berinteraksi dengan database (saat ini menggunakan data dummy dalam memori).
-- Menyediakan endpoint yang aman dan terdokumentasi untuk diakses oleh frontend.
+- Menyediakan endpoint yang aman dan terdokumentasi untuk diakses oleh frontend. 
 
 ### Struktur File
 Berikut adalah struktur file di dalam direktori `backend/FastApi`:
@@ -147,7 +147,7 @@ Berikut adalah struktur file di dalam direktori `backend/FastApi`:
 - **`venv/`**: Direktori yang berisi *virtual environment* Python. Ini adalah lingkungan terisolasi tempat semua dependensi proyek diinstal, mencegah konflik dengan proyek Python lain di sistem Anda.
 
 ### Penyiapan & Instalasi
-Untuk menjalankan backend, Anda perlu menyiapkan lingkungan Python dan menginstal dependensi yang diperlukan.
+Untuk menjalankan backend, Anda perlu menyiapkan lingkungan Python dan menginstal dependensi yang diperlukan. 
 
 **Langkah 1: Buka Terminal**
 Buka terminal atau command prompt pilihan Anda.
@@ -318,6 +318,7 @@ Untuk meningkatkan pengalaman pengguna dan keamanan, alur otentikasi yang lebih 
   - **Di Halaman Login**: Jika pengguna belum login dan sedang berada di halaman `/login`, tombol login diganti dengan sapaan "Haloo" untuk memberikan konteks bahwa pengguna sudah berada di tempat yang tepat.
 - **Rute Terlindungi**: Rute `/admin` sekarang dilindungi. Jika pengguna yang belum login mencoba mengaksesnya secara langsung, mereka akan secara otomatis dialihkan ke halaman `/login`.
 
+<<<<<<< HEAD
 ---
 
 ## Bab 8: Koneksi Frontend & Backend
@@ -364,3 +365,25 @@ Komunikasi antara keduanya terjadi melalui **permintaan HTTP**, khususnya menggu
 5.  **Backend (FastAPI)**: Mencari mobil dengan `id: 1` di dalam `cars.json`.
 6.  **Backend (FastAPI)**: Mengirimkan kembali data mobil yang ditemukan sebagai respons JSON.
 7.  **Frontend (React)**: Menerima respons, menyimpannya dalam *state*, dan memperbarui UI untuk menampilkan detail mobil yang sesuai.
+=======
+## Bab 8 Database & Business Logic
+### 1. Database 
+-Car  
+    "id": 
+    "name": 
+    "year": 
+    "price": 
+    "image": 
+    "category": 
+    "status": 
+    "acceleration":
+    "fuelConsumption": 
+    "description": 
+    "images"
+    "specifications"
+
+-Useradmin : username, pasword 
+
+### Business Logic 
+
+>>>>>>> ANISA

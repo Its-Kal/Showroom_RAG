@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
             <h4>Layanan</h4>
             <ul>
               <li><Link to="/koleksi">Koleksi Mobil</Link></li>
-              <li><Link to="/chatbot">Konsultasi AI</Link></li>
+              <li><Link to="/chat">Konsultasi AI</Link></li>
             </ul>
           </div>
           <div className="column">
