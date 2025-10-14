@@ -89,6 +89,9 @@ Folder ini berisi blok bangunan UI yang lebih kecil dan dapat digunakan kembali.
 - **`CarCard.tsx`**: Komponen kartu untuk menampilkan ringkasan satu mobil. Digunakan di banyak halaman.
 - **`CarDetail.tsx`**: Menampilkan semua detail dari satu mobil, termasuk gambar dan spesifikasi.
 - **`TestimonialSection.tsx` & `TestimonialCard.tsx`**: Menampilkan bagian testimoni pelanggan.
+- **`ScrollToTop.tsx`**: Komponen fungsional yang sangat penting untuk pengalaman pengguna.
+  - **Masalah yang Dipecahkan**: Pada aplikasi satu halaman (Single Page Application), `react-router` tidak secara otomatis mengembalikan posisi scroll ke atas saat berpindah halaman. Ini menyebabkan halaman baru ditampilkan dari posisi scroll halaman sebelumnya (misalnya, dari bagian bawah).
+  - **Cara Kerja**: Komponen ini menggunakan *hook* `useLocation` untuk mendeteksi setiap perubahan pada URL. Ketika URL berubah, ia secara otomatis menjalankan `window.scrollTo(0, 0)`, memaksa halaman untuk selalu ditampilkan dari paling atas.
 
 ---
 

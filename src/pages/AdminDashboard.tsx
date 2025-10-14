@@ -141,12 +141,7 @@ const AdminDashboard: React.FC = () => {
                         <li><button onClick={() => handleNavClick('slider')} className={currentView === 'slider' ? 'active' : ''}>Manage Hero Slider</button></li>
                         <li><button onClick={() => handleNavClick('settings')} className={currentView === 'settings' ? 'active' : ''}>Settings</button></li>
                     </ul>
-                </nav>
-                <div className="sidebar-footer">
-                    <ul>
-                        <li><button onClick={() => alert('Logout clicked!')}><LogoutIcon /> Logout</button></li>
-                    </ul>
-                </div>
+                </nav>Sa
             </aside>
 
             <main className="admin-content">

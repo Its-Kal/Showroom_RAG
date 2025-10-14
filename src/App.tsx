@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import './App.css';
 import { LoadingProvider, useLoading } from './contexts/LoadingContext';
 import LoadingScreen from './LoadingScreen';
+import ScrollToTop from './components/ScrollToTop'; // 1. Impor komponen ScrollToTop
 
 // Import pages directly
 import HomePage from './pages/HomePage';
@@ -39,6 +40,7 @@ const AppContent = () => {
 
   return (
     <Router>
+      <ScrollToTop /> {/* 2. Pasang komponen di sini */}
       {isLoading && <LoadingScreen />}
       <div className="App">
         <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />

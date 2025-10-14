@@ -31,6 +31,9 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
     };
   }, []);
 
+  // Cek apakah kita berada di halaman admin
+  const isAdminPage = location.pathname.startsWith('/admin');
+
   const renderLoginButton = () => {
     if (isLoggedIn) {
       return <button onClick={handleLogout} className="consult-btn">Keluar</button>;
@@ -57,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
   };
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+    <header className={`header ${(isScrolled || isAdminPage) ? 'scrolled' : ''}`}>
       <div className="nav-container">
         <div className="logo">
           <Link to="/" onClick={closeMenu}>

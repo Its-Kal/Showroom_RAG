@@ -65,7 +65,7 @@ body {
 }
 
 .header.scrolled {
-    background-color: #FFF9F3; /* Warna sama dengan background body */
+    background-color: #ffffff; /* Diubah ke putih bersih untuk kontras */
     color: #111827; /* Warna teks menjadi gelap agar kontras */
     padding: 1rem 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
