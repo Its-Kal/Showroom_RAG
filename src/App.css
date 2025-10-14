@@ -27,7 +27,7 @@ body {
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color:#f9fafb;
+    background-color:#FFF9F3;
     color: #111827;
     line-height: 1.6;
 }
@@ -54,24 +54,22 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1.25rem 2rem;
-    background: transparent;
-    background-color: rgba(15, 23, 42, 0.5); /* Warna footer semi-transparan */
-    color: white;
-    position: sticky;
+    padding: 1.5rem 2rem; /* Padding awal sedikit lebih besar */
+    background-color: transparent; /* Latar belakang transparan saat di atas */
+    color: #FFF9F3;
+    position: fixed; /* Mengubah dari sticky ke fixed */
     top: 0;
-    z-index: 100;
     width: 100%;
-    transition: background-color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
+    transition: background-color 0.5s ease-in-out, padding 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+    z-index: 1000; /* z-index tinggi agar selalu di atas */
 }
 
 .header.scrolled {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    background-color: rgba(15, 23, 42, 0.9); /* Lebih pekat saat di-scroll */
+    background-color: #FFF9F3; /* Warna sama dengan background body */
+    color: #111827; /* Warna teks menjadi gelap agar kontras */
     padding: 1rem 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #e5e7eb; /* Garis bawah tipis untuk pemisah */
 }
 
 .nav-container {
@@ -84,7 +82,12 @@ body {
 
 .logo a {
     text-decoration: none;
-    color: white;
+    color: #FFF9F3;
+    transition: color 0.4s ease;
+}
+
+.header.scrolled .logo a {
+    color: #111827; /* Warna logo menjadi gelap */
     display: block;
     line-height: 1.2;
 }
@@ -115,13 +118,17 @@ body {
 }
 
 .nav-links a {
-    color: white;
+    color: #FFF9F3;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease, opacity 0.3s ease;
     position: relative;
     padding-bottom: 4px;
     opacity: 0.9;
+}
+.header.scrolled .nav-links a {
+    color: #111827; /* Warna link menjadi gelap */
+    opacity: 0.8;
 }
 
 .nav-links a::after {
@@ -132,19 +139,24 @@ body {
     transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background-color: var(--premium-blue);
+    background-color: currentColor; /* Menggunakan warna font saat ini */
     transition: width 0.3s ease;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
-    color: white;
     opacity: 1;
 }
 
 .nav-links a:hover::after,
 .nav-links a.active::after {
-    width: 100%;
+    width: 80%; /* Sedikit lebih pendek untuk estetika */
+}
+
+.header.scrolled .nav-links a:hover,
+.header.scrolled .nav-links a.active {
+    /* Menghapus perubahan warna saat hover, hanya garis bawah yang muncul */
+    opacity: 1;
 }
 
 .nav-actions {
@@ -155,10 +167,10 @@ body {
 
 .consult-btn {
     background: transparent;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid #FFF9F3;
+    color: #FFF9F3;
     padding: 0.6rem 1.2rem;
-    border-radius: 50px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 600;
@@ -170,19 +182,19 @@ body {
 }
 
 .consult-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 249, 243, 0.1);
     transform: translateY(-2px);
 }
 
 .header.scrolled .consult-btn {
-    background: white;
-    color: #111827; /* Warna teks hitam/gelap */
-    border-color: white;
+    background: #3B597B; /* Menyamakan dengan .btn-detail */
+    color: #FFF9F3; /* Warna teks putih */
+    border-color: #3B597B;
 }
 
 .header.scrolled .consult-btn:hover {
-    background: #f3f4f6; /* Warna sedikit abu-abu saat hover */
-    border-color: #f3f4f6;
+    background: #1e293b; /* Menyamakan dengan hover .btn-detail */
+    border-color: #1e293b;
     box-shadow: var(--shadow-elevated);
 }
 
@@ -194,7 +206,7 @@ body {
     display: none;
     background: transparent;
     border: none;
-    color: white;
+    color: #FFF9F3;
     cursor: pointer;
     padding: 0.5rem;
     z-index: 1001;
@@ -281,7 +293,7 @@ body {
 
 .hero-content {
     text-align: center;
-    color: white;
+    color: #FFF9F3;
     z-index: 2;
     max-width: 800px;
     padding: 2rem;
@@ -307,42 +319,46 @@ body {
 }
 
 .btn-primary {
-    background: white;
-    color: #0f172a;
-    padding: 0.75rem 2rem;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
+    background-color: #1e293b; /* Warna hover dari .btn-detail */
+    color: #ffffff;
+    padding: 0.6rem 1.2rem; /* Disesuaikan agar sama dengan .consult-btn */
+    border: 1px solid #1e293b;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    gap: 0.5rem;    text-decoration: none; /* Menghilangkan garis bawah dari Link */
     transition: all 0.3s ease;
     font-weight: 600;
+    font-size: 0.9rem; /* Disesuaikan agar sama dengan .consult-btn */
 }
 
 .btn-primary:hover {
-    background: #e5e7eb;
+    background: #0f172a; /* Warna lebih gelap untuk efek hover */
+    border-color: #0f172a;
     transform: translateY(-2px);
 }
 
 .btn-secondary {
     background: transparent;
-    color: white;
-    padding: 0.75rem 2rem;
-    border: 1px solid white;
-    border-radius: 50px;
-    font-size: 1rem;
+    color: #FFF9F3;
+    border: 1px solid #FFF9F3;    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    text-decoration: none; /* Menghilangkan garis bawah dari Link */
     transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 249, 243, 0.1);
     backdrop-filter: blur(2px);
+    transform: translateY(-2px);
 }
 
 
@@ -350,12 +366,62 @@ body {
 
 .collection-section {
     padding: 4rem 2rem;
-    background-color: #f9fafb;
+    padding: 4rem 0; /* Padding vertikal, horizontal diatur oleh container */
+    background-color: #FFF9F3;
+    overflow: hidden; /* Mencegah shadow atau tombol navigasi keluar layout */
+}
+
+.collection-header-wrapper {
+    display: flex;
+    flex-direction: column; /* Mengubah arah flex menjadi kolom */
+    justify-content: center; /* Memusatkan item secara vertikal */
+    align-items: center;
+    gap: 1.5rem; /* Menambahkan jarak antara blok judul dan tombol navigasi */
+    padding: 0 2rem; /* Padding horizontal untuk header dan tombol */
+    margin-bottom: 2rem;
+}
+
+.slider-btn {
+    background-color: #e5e7eb;
+    background-color: transparent;
+    border: 1px solid #d1d5db;
+    border: none;
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.collection-slider-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.slider-btn {
+    position: absolute;
+    z-index: 10;
+}
+
+.slider-btn.prev { left: -10px; }
+.slider-btn.next { right: -10px; }
+
+.slider-btn:hover {
+    background-color: #111827;
+    color: #FFF9F3;
+    border-color: #111827;
+}
+
+.slider-btn svg {
+    width: 16px;
 }
 
 .collection-header {
     text-align: center;
-    margin-bottom: 2rem;
 }
 
 .collection-header h2 {
@@ -370,56 +436,76 @@ body {
     margin: 0 auto;
 }
 
-.filters {
+.collection-tabs-container {
+    padding: 0 2rem;
+    max-width: 1400px;
+    margin: 0 auto 2rem auto;
+}
+
+.collection-tabs {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    gap: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
 }
 
-.filters span {
+.tab-item {
+    background: none;
+    border: none;
+    padding: 0.75rem 0; /* Mengurangi padding agar lebih fokus pada garis bawah */
+    cursor: pointer;
+    font-size: 1rem;
     font-weight: 500;
     color: #6b7280;
+    position: relative;
+    transition: color 0.3s ease;
 }
 
-.filters button {
-    background: white;
-    border: 1px solid #d1d5db;
+.tab-item:hover {
     color: #111827;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
 }
 
-.filters button:hover {
-    background: #1e293b; /* Warna abu-abu gelap (sama seperti hover Lihat Detail) */
-    color: #f8fafc; /* Warna teks putih pudar */
-    border-color: #1e293b;
+.tab-item.active {
+    color: #111827;
+    font-weight: 600;
 }
 
-.filters button.active {
-    background: #334155; /* Warna abu-abu maskulin (sama seperti Lihat Detail) */
-    color: white;
-    border-color: #334155;
+.tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3B597B;
 }
 
-.car-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
+.collection-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1.5rem; /* 24px */
+    padding: 1rem 2rem; /* Padding horizontal untuk memberi ruang di awal dan akhir */
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; /* Scroll halus di iOS */
+    scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
+}
+.collection-scroll-container::-webkit-scrollbar {
+    display: none; /* Sembunyikan scrollbar di Chrome, Safari, Opera */
+}
+
+.collection-slide-item {
+    flex: 0 0 100%; /* Setiap item mengisi 100% container */
+    scroll-snap-align: center; /* Pusatkan item saat scroll berhenti */
+    padding: 0 2rem; /* Beri jarak dari tepi */
 }
 
 /* === CAR CARD === */
 
 /* Mengubah CarCard menjadi lebih modern dan elegan */
-.car-card {
-  background-color: #ffffff;
-  border-radius: 16px; /* Sudut lebih tumpul */
+.car-card-new {
+  background-color: #FFF9F3;
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow lebih halus */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -427,9 +513,89 @@ body {
   flex-direction: column;
   text-decoration: none; /* Menghilangkan underline dari Link */
   color: inherit; /* Mewarisi warna teks default */
+  flex-shrink: 0;
+  width: 350px;
+  scroll-snap-align: start;
 }
 
-.car-card:hover {
+/* Styling baru untuk kartu di Collection Section */
+.collection-card-content {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #111827; /* Teks gelap karena background terang */
+}
+
+.collection-card-image-container {
+    width: 100%;
+    max-width: 600px; /* Batasi lebar gambar */
+    margin-bottom: 2rem;
+}
+
+.collection-card-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.collection-card-details {
+    display: flex;
+    justify-content: space-around; /* Menyebar item secara merata */
+    align-items: flex-start; /* Rata atas */
+    gap: 2rem;
+    width: 100%;
+    max-width: 900px; /* Batasi lebar total detail */
+}
+
+.detail-item {
+    flex: 1; /* Setiap item mengambil ruang yang sama */
+    text-align: center;
+    padding: 0 2rem; /* Menambahkan padding agar konten tidak menempel pada garis */
+}
+
+.detail-item:not(:first-child) {
+    border-left: 1px solid #e5e7eb; /* Garis pemisah vertikal */
+}
+
+.car-description {
+    font-size: 0.9rem;
+    color: #6b7280;
+    text-align: left;
+}
+
+.car-actions-horizontal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+
+@media (max-width: 768px) {
+    .car-card-new {
+        width: 85vw;
+    }
+    .collection-header-wrapper {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+    .collection-card-details {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+}
+
+.car-card-new:hover {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12); /* Shadow lebih dalam saat hover */
 }
 
@@ -450,7 +616,7 @@ body {
   transition: transform 0.3s ease;
 }
 
-.car-card:hover .car-image-wrapper img {
+.car-card-new:hover .car-image-wrapper img {
   transform: scale(1.05); /* Efek zoom pada gambar saat hover */
 }
 
@@ -459,10 +625,10 @@ body {
   top: 12px;
   right: 12px;
   padding: 5px 12px;
-  border-radius: 50px;
+  border-radius: 0;
   font-size: 0.75rem;
   font-weight: 600;
-  color: white;
+  color: #FFF9F3;
   background: rgba(22, 163, 74, 0.8); /* Warna hijau untuk status 'Tersedia' */
   backdrop-filter: blur(5px);
 }
@@ -471,67 +637,72 @@ body {
   background: rgba(245, 158, 11, 0.8); /* Warna kuning/oranye untuk status 'Dipesan' */
 }
 
-.category-tag {
-  display: none; /* Kategori bisa disembunyikan untuk tampilan lebih bersih */
-}
-
-.car-info {
+.car-info-new {
   padding: 1.25rem;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  background-color: #cfcfcf; /* Warna abu-abu muda */
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-top: none;
 }
 
-.car-info h3 {
-  font-size: 1.25rem; /* Lebih besar */
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-  color: #111827;
+.category-badge {
+    background-color: #f3f4f6;
+    color: #111827;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    align-self: flex-start;
+    margin-bottom: 1rem;
 }
 
-.car-info .year {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 1rem;
+.car-name {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.1;
+    margin-bottom: 1rem;
 }
 
-.car-info .price {
-  font-size: 1.5rem; /* Lebih menonjol */
-  font-weight: 700;
-  color: #111827; /* Mengubah warna harga menjadi hitam */
-  margin-bottom: 1rem;
+.highlighted-specs {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    flex-grow: 1;
 }
 
-.specs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  font-size: 0.85rem;
-  color: #4b5563;
-  margin-bottom: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #f3f4f6;
+.highlighted-specs li {
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: 0.5rem;
 }
 
-.specs svg {
-  margin-right: 0.5rem;
-  vertical-align: middle;
-  color: #9ca3af;
+.highlighted-specs li::before {
+    content: '•';
+    color: #3B597B;
+    font-weight: bold;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    font-size: 1.2rem;
 }
 
 .btn-detail {
   width: 100%;
-  background: #334155; /* Warna abu-abu maskulin (slate-700) */
-  color: #f8fafc; /* Warna teks putih pudar */
+  background: #3B597B; /* Warna biru tua/navy */
+  color: #ffffff; /* Warna teks putih */
   border: none;
   padding: 0.8rem 1rem;
-  border-radius: 50px; /* Tombol menjadi pil */
+  border-radius: 4px; /* Rounded corners halus */
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
   text-align: center;
   transition: all 0.3s ease;
+  margin-bottom: 1rem;
   margin-top: auto; /* Mendorong tombol ke bawah */
   text-decoration: none; /* Menghilangkan garis bawah */
 }
@@ -543,39 +714,18 @@ body {
 }
 
 /* === TESTIMONIAL SECTION === */
-
 .testimonial-section {
-    padding: 5rem 0; /* Padding vertikal, horizontal diatur oleh container */
-    background-color: var(--dark-bg);
-    color: var(--light-text);
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 0 2rem;
-}
-
-.section-header h2 {
-    font-size: 2.8rem;
-    margin-bottom: 1rem;
-    color: #ffffff;
-    font-weight: 800;
-}
-
-.section-header p {
-    color: var(--light-text);
-    max-width: 800px;
-    margin: 0 auto;
-    font-size: 1.1rem;
-    opacity: 0.9;
+    padding: 4rem 0; /* Padding vertikal, horizontal diatur di container */
+    background-color: #FFF9F3;
+    overflow: hidden; /* Mencegah shadow terpotong */
 }
 
 .testimonial-container {
     display: flex;
-    gap: 2rem;
+    flex-wrap: nowrap;
     overflow-x: auto;
-    padding: 1rem 2rem; /* Padding untuk memberi ruang di awal dan akhir */
+    gap: 1.5rem; /* 24px */
+    padding: 1rem 2rem; /* Padding horizontal untuk ruang di awal dan akhir */
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch; /* Scroll halus di iOS */
     scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
@@ -585,67 +735,95 @@ body {
     display: none; /* Sembunyikan scrollbar di Chrome, Safari, Opera */
 }
 
-/* === TESTIMONIAL CARD === */
-
 .testimonial-card {
-    background: rgba(30, 41, 59, 0.5); /* Semi-transparent background */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 12px;
-    flex: 0 0 80%; /* Mencegah kartu menyusut dan mengatur lebar dasarnya */
+    flex: 0 0 350px; /* Lebar tetap 350px, tidak mengecil */
+    background: #ffffff;
+    border-radius: 0;
     padding: 2rem;
-    box-shadow: var(--shadow-elevated);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    scroll-snap-align: center; /* Kartu akan berhenti di tengah saat scroll */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    scroll-snap-align: start; /* Kartu akan berhenti di awal saat scroll */
     display: flex;
     flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .testimonial-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
-.avatar-placeholder {
-    width: 50px;
-    height: 50px;
-    background: var(--premium-blue);
-    border-radius: 50%;
-    margin-bottom: 1rem;
-}
-
-.testimonial-header h4 {
-    font-size: 1.1rem;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-.testimonial-header .role {
-    font-size: 0.8rem;
-    color: #6b7280;
+@media (max-width: 768px) {
+    .testimonial-card {
+        flex-basis: 85vw; /* Lebar kartu 85% dari lebar viewport di mobile */
+    }
+    .testimonial-container {
+        padding: 1rem 1.5rem;
+    }
 }
 
 .rating {
-    margin: 1rem 0;
-    color: #FFD700;
-}
-
-.rating svg {
-    fill: #FFD700;
-    margin-right: 0.2rem;
-}
-
-.content {
-    font-style: italic;
-    color: #4b5563;
+    display: flex;
+    color: #f59e0b; /* Warna bintang emas */
     margin-bottom: 1rem;
-    font-size: 0.95rem;
 }
 
+.testimonial-quote {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    flex-grow: 1; /* Membuat kutipan mengisi ruang yang tersedia */
+    margin-bottom: 1.5rem;
+}
 
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto; /* Mendorong author ke bawah */
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
 
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
+.author-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.author-info p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* === INDIKATOR SCROLL TESTIMONI === */
+.testimonial-dots {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.testimonial-dots .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #d1d5db; /* Warna dot tidak aktif */
+    margin: 0 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.testimonial-dots .dot.active {
+    background-color: #3B597B; /* Warna dot aktif (biru tua) */
+    transform: scale(1.2);
+}
 /* === FOOTER === */
 
 .footer {
@@ -711,7 +889,7 @@ body {
 .column h4 {
     font-size: 1.1rem;
     margin-bottom: 1rem;
-    color: #ffffff;
+    color: #FFF9F3;
 }
 
 .column ul {
@@ -741,19 +919,18 @@ body {
 .newsletter-form input {
     flex: 1;
     padding: 0.5rem;
-    border: 1px solid #475569;
-    border-radius: 50px;
+    border: 1px solid #475569;    border-radius: 0;
     background: #1e293b;
-    color: white;
+    color: #FFF9F3;
     font-size: 0.9rem;
 }
 
 .newsletter-form button {
     background: #007bff;
-    color: white;
+    color: #FFF9F3;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: background 0.3s ease;
@@ -800,8 +977,7 @@ body {
     max-width: 1200px;
     margin: 4rem auto; /* Memberi jarak dari header dan footer */
     padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 12px;
+    background-color: #FFF9F3;    border-radius: 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: grid;
     grid-template-columns: 1fr; /* Default 1 kolom untuk mobile */
@@ -823,7 +999,7 @@ body {
     height: auto;
     aspect-ratio: 16 / 10;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 0;
     border: 1px solid #e5e7eb;
 }
 
@@ -836,7 +1012,7 @@ body {
 
 .car-images-thumbnail img {
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 0;
     opacity: 0.7;
     transition: opacity 0.3s ease, transform 0.3s ease;
     border: 2px solid transparent;
@@ -920,22 +1096,25 @@ body {
     flex: 1; /* Membuat kedua tombol memiliki lebar yang sama */
     padding: 0.8rem 1.5rem;
     font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
+    font-weight: 600;    border-radius: 4px;
     text-align: center;
+    text-decoration: none; /* Menghilangkan garis bawah dari Link */
     transition: all 0.3s ease;
 }
 
 .car-detail-actions .btn-primary {
     background-color: var(--premium-blue);
-    color: white;
+    background-color: #111827; /* Mengganti biru menjadi hitam/gelap */
+    color: #FFF9F3;
     border: none;
 }
 
 .car-detail-actions .btn-primary:hover {
     background-color: var(--premium-blue-dark);
+    background-color: #334155; /* Warna hover yang lebih lembut */
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(51, 65, 85, 0.2);
 }
 
 .car-detail-actions .btn-secondary {

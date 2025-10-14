@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Car } from '../types/Car';
 
@@ -6,31 +6,28 @@ interface CarCardProps {
   car: Car;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car }) => {
-  const [isHovered, setIsHovered] = useState(false);
+// Inline SVG Icons for Specs
+const SpeedIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>;
+const FuelIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>;
 
+const CarCard: React.FC<CarCardProps> = ({ car }) => {
   return (
-    <div 
-      className="car-card" 
-      onMouseEnter={() => setIsHovered(true)} 
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="car-image-wrapper">
-        <img src={car.image} alt={car.name} />
-        <div className={`status-badge ${car.status}`}>
-          {car.status === 'available' ? 'Tersedia' : 'Dipesan'}
-        </div>
-        <div className="category-tag">{car.category}</div>
+    <div className="collection-card-content">
+      <div className="collection-card-image-container">
+        <img src={car.image} alt={car.name} className="collection-card-image" />
       </div>
-      <div className="car-info">
-        <h3>{car.name}</h3>
-        <p className="year">{car.year}</p>
-        <p className="price">{car.price}</p>
-        <div className="specs">
-          <span>⚡ {car.acceleration}</span>
-          <span>⛽ {car.fuelConsumption}</span>
+      <div className="collection-card-details">
+        <div className="detail-item">
+          <span className="category-badge">{car.category}</span>
+          <h3 className="car-name">{car.name}</h3>
         </div>
-        <Link to={`/koleksi/${car.id}`} className="btn-detail">Lihat Detail</Link>
+        <div className="detail-item">
+          <p className="car-description">{car.description}</p>
+        </div>
+        <div className="detail-item car-actions-horizontal">
+          <span className={`status-badge ${car.status}`}>{car.status === 'available' ? 'Tersedia' : 'Dipesan'}</span>
+          <Link to={`/koleksi/${car.id}`} className="btn-detail">Lihat Detail</Link>
+        </div>
       </div>
     </div>
   );

@@ -1,187 +1,270 @@
-
 :root {
-    --primary-color: #007bff;
-    --primary-hover: #0056b3;
-    --danger-color: #dc3545;
-    --danger-hover: #c82333;
-    --light-gray: #f8f9fa;
-    --gray: #6c757d;
-    --dark-gray: #343a40;
-    --border-color: #dee2e6;
-    --card-bg: #ffffff;
-    --shadow: 0 4px 8px rgba(0,0,0,0.1);
+  --admin-bg: #FFF9F3; /* Menyesuaikan dengan background utama website */
+  --sidebar-bg: #ffffff;
+  --content-bg: #ffffff;
+  --border-color: #e9ecef;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --accent-color: #3B597B; /* Warna biru navy dari tema utama */
+  --accent-color-hover: #1e293b; /* Warna hover yang lebih gelap */
+  --delete-color: #dc3545;
+  --delete-color-hover: #c82333;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --success-bg: #d4edda;
+  --success-text: #155724;
+  --error-bg: #f8d7da;
+  --error-text: #721c24;
 }
 
-.admin-dashboard {
-    padding: 2rem;
-    background-color: var(--light-gray);
-    min-height: 100vh;
+/* Layout Utama */
+.admin-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  min-height: 100vh;
+  background-color: var(--admin-bg);
+  /* Memberi ruang di bagian atas seukuran header (sekitar 80px-100px) */
+  padding-top: 90px; 
 }
 
-.admin-dashboard h2, .admin-dashboard h3 {
-    color: var(--dark-gray);
-    margin-bottom: 1.5rem;
+/* Sidebar */
+.admin-sidebar {
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
 }
 
-.dashboard-content {
-    display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 2rem;
-    align-items: flex-start;
+.sidebar-header {
+  padding: 0 0.5rem 1.5rem 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.form-container {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    position: sticky;
-    top: 2rem;
+.sidebar-header h3 {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
 }
 
-.upload-form .form-group {
-    margin-bottom: 1rem;
+.sidebar-header p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0 0;
 }
 
-.upload-form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--gray);
-    font-weight: 500;
+.sidebar-nav {
+  flex-grow: 1;
 }
 
-.upload-form input, .upload-form textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    transition: border-color 0.2s;
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.upload-form input:focus, .upload-form textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
+.sidebar-nav li button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.form-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
+.sidebar-nav li button:hover {
+  background-color: var(--admin-bg);
+  color: var(--text-primary);
 }
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s, color 0.3s;
+.sidebar-nav li button.active {
+  background-color: #eef2ff; /* Latar belakang biru muda untuk item aktif */
+  color: var(--accent-color); /* Teks menjadi warna biru navy */
+  font-weight: 600;
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-.btn-primary:hover {
-    background-color: var(--primary-hover);
+.btn-add-new {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+  font-weight: 600;
 }
 
-.btn-secondary {
-    background-color: var(--gray);
-    color: white;
-}
-.btn-secondary:hover {
-    background-color: var(--dark-gray);
+.btn-add-new:hover {
+  background-color: var(--accent-color-hover) !important;
 }
 
-.car-list-container {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
+.sidebar-footer {
+  margin-top: auto;
 }
 
-.car-grid-admin {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+.sidebar-footer button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.car-card-admin {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+.sidebar-footer button:hover {
+  background-color: #fee2e2; /* Latar belakang merah muda saat hover */
+  color: var(--delete-color); /* Warna teks menjadi merah */
 }
 
-.car-card-admin:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow);
+/* Konten Utama */
+.admin-content {
+  padding: 2rem;
+  overflow-y: auto;
 }
 
-.car-card-admin img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
+.admin-content h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
 }
 
-.car-card-admin-content {
-    padding: 1rem;
+/* Styling untuk Form, Table, dll. */
+.content-view {
+  background-color: transparent; /* Mengubah background menjadi transparan */
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: none; /* Menghapus bayangan */
+  border: none; /* Menghapus garis tepi */
 }
 
-.car-card-admin-content h4 {
-    margin: 0 0 0.5rem 0;
-    color: var(--dark-gray);
+.admin-form .form-group {
+  margin-bottom: 1.5rem;
 }
 
-.car-card-admin-content p {
-    margin: 0;
-    color: var(--gray);
-    font-size: 0.9rem;
+.admin-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
-.car-actions {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0 1rem 1rem 1rem;
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.btn-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.25rem;
-    color: var(--gray);
-    transition: color 0.2s;
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.25);
 }
 
-.btn-icon:hover {
-    color: var(--dark-gray);
+.btn-submit-car {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
 }
 
-.btn-icon svg {
-    width: 18px;
-    height: 18px;
+.btn-submit-car:hover {
+  background-color: var(--accent-color-hover);
 }
 
+/* Manage Cars View */
+.car-management-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.car-management-table th,
+.car-management-table td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.car-management-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.car-actions button {
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.car-actions .btn-edit {
+  background-color: var(--accent-color);
+  margin-right: 0.5rem;
+}
+.car-actions .btn-edit:hover {
+  background-color: var(--accent-color-hover);
+}
+
+.car-actions .btn-delete {
+  background-color: var(--delete-color);
+}
+.car-actions .btn-delete:hover {
+  background-color: var(--delete-color-hover);
+}
+
+/* Manage Hero Slider View */
+.hero-upload-note {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #e9ecef;
+  border-left: 4px solid var(--accent-color);
+  color: var(--text-secondary);
+  border-radius: 4px;
+}
+
+/* Pesan Sukses/Error */
 .message {
-    padding: 1rem;
-    margin-top: 1.5rem;
-    border-radius: 4px;
-    text-align: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  text-align: center;
 }
 
 .message.success {
-    background-color: #d4edda;
-    color: #155724;
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 
 .message.error {
-    background-color: #f8d7da;
-    color: #721c24;
+  background-color: var(--error-bg);
+  color: var(--error-text);
 }

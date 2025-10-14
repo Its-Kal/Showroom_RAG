@@ -29,12 +29,16 @@ const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
         setMessage('');
 
         try {
-            const response = await fetch('http://localhost:8000/login', {
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            const response = await fetch('http://localhost:8000/users/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: JSON.stringify({ username, password }),
+                body: formData,
             });
 
             const data = await response.json();

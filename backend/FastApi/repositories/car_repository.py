@@ -1,54 +1,48 @@
-import json
 from typing import List
-from models.car_model import Car, UpdateCar
+from sqlmodel import Session, select
+from models.car_model import Car, CarCreate, CarUpdate
 
-CAR_FILE = "cars.json"
+def get_all_cars(session: Session) -> List[Car]:
+    """Fetches all cars from the database."""
+    return session.exec(select(Car)).all()
 
-def load_car_data() -> List[Car]:
-    try:
-        with open(CAR_FILE, "r") as f:
-            data = json.load(f)
-            return [Car(**car) for car in data]
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
+def find_car_by_id(session: Session, car_id: int) -> Car | None:
+    """Finds a car by its ID."""
+    return session.get(Car, car_id)
 
-def save_car_data(cars: List[Car]):
-    with open(CAR_FILE, "w") as f:
-        json.dump([car.dict() for car in cars], f, indent=2)
+def add_car(session: Session, car_create: CarCreate) -> Car:
+    """Adds a new car to the database."""
+    # Create a new Car instance from the CarCreate model
+    db_car = Car.model_validate(car_create)
+    session.add(db_car)
+    session.commit()
+    session.refresh(db_car)
+    return db_car
 
-car_db = load_car_data()
-
-def get_all_cars() -> List[Car]:
-    return car_db
-
-def find_car_by_id(car_id: int) -> Car | None:
-    return next((car for car in car_db if car.id == car_id), None)
-
-def find_car_index(car_id: int) -> int:
-    return next((i for i, car in enumerate(car_db) if car.id == car_id), -1)
-
-def add_car(car: Car):
-    car_db.append(car)
-    save_car_data(car_db)
-
-def update_car_in_db(car_id: int, car_update: UpdateCar) -> Car | None:
-    car_index = find_car_index(car_id)
-    if car_index == -1:
+def update_car_in_db(session: Session, car_id: int, car_update: CarUpdate) -> Car | None:
+    """Updates an existing car in the database."""
+    db_car = session.get(Car, car_id)
+    if not db_car:
         return None
-    
-    car = car_db[car_index]
-    update_data = car_update.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(car, key, value)
-    
-    save_car_data(car_db)
-    return car
 
-def delete_car_from_db(car_id: int) -> bool:
-    original_len = len(car_db)
-    global car_db
-    car_db = [car for car in car_db if car.id != car_id]
-    if len(car_db) < original_len:
-        save_car_data(car_db)
-        return True
-    return False
+    # Get the update data, excluding unset fields to avoid overwriting with None
+    update_data = car_update.model_dump(exclude_unset=True)
+    
+    # Update the model fields
+    for key, value in update_data.items():
+        setattr(db_car, key, value)
+    
+    session.add(db_car)
+    session.commit()
+    session.refresh(db_car)
+    return db_car
+
+def delete_car_from_db(session: Session, car_id: int) -> bool:
+    """Deletes a car from the database."""
+    db_car = session.get(Car, car_id)
+    if not db_car:
+        return False
+    
+    session.delete(db_car)
+    session.commit()
+    return True

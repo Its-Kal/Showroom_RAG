@@ -1,68 +1,92 @@
-import React from 'react';
-import { Testimonial } from '../types/Testimonial'; // ✅ Impor interface
+import React, { useState, useRef, useEffect } from 'react';
+import '../App.css';
 
-// Data dummy
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: 'Budi Santoso',
-    role: 'CEO',
-    company: 'PT Maju Jaya',
-    // Menggunakan UI Avatars untuk placeholder yang lebih baik
-    image: 'https://ui-avatars.com/api/?name=Budi+Santoso&background=0D8ABC&color=fff&size=96',
-    rating: 5,
-    message: 'Pelayanan luar biasa! Mobil yang saya beli sesuai deskripsi dan kondisi prima.'
-  },
-  {
-    id: 2,
-    name: 'Siti Rahayu',
-    role: 'Marketing Director',
-    company: 'CV Karya Indah',
-    image: 'https://ui-avatars.com/api/?name=Siti+Rahayu&background=1a237e&color=fff&size=96',
-    rating: 5,
-    message: 'Proses pembelian sangat cepat dan transparan. Sangat direkomendasikan!'
-  },
-  {
-    id: 3,
-    name: 'Andi Wijaya',
-    role: 'Founder',
-    company: 'StartupXYZ',
-    image: 'https://ui-avatars.com/api/?name=Andi+Wijaya&background=4a5568&color=fff&size=96',
-    rating: 4,
-    message: 'Mobilnya keren, harga kompetitif. Hanya sedikit kendala administrasi, tapi tim langsung membantu.'
-  }
+const testimonials = [
+    {
+        id: 1,
+        name: 'Budi Santoso',
+        role: 'Pengusaha',
+        quote: 'Pelayanan di Premium Auto sangat luar biasa. Mereka membantu saya menemukan SUV yang sempurna untuk keluarga. Prosesnya cepat dan transparan. Sangat direkomendasikan!',
+        avatar: 'https://i.pravatar.cc/150?u=budi'
+    },
+    {
+        id: 2,
+        name: 'Citra Lestari',
+        role: 'Desainer Grafis',
+        quote: 'Saya mencari mobil sport bekas dengan kondisi prima. Tim di sini tidak hanya menemukannya, tetapi juga memberikan harga yang sangat kompetitif. Saya sangat puas!',
+        avatar: 'https://i.pravatar.cc/150?u=citra'
+    },
+    {
+        id: 3,
+        name: 'Ahmad Dahlan',
+        role: 'Dokter',
+        quote: 'Kejujuran dan profesionalisme adalah dua kata yang menggambarkan showroom ini. Semua informasi diberikan secara detail. Pengalaman membeli mobil terbaik saya sejauh ini.',
+        avatar: 'https://i.pravatar.cc/150?u=ahmad'
+    },
+    {
+        id: 4,
+        name: 'Dewi Anggraini',
+        role: 'Manajer Pemasaran',
+        quote: 'Dari konsultasi awal hingga serah terima kunci, semuanya berjalan mulus. Koleksi mobilnya juga sangat terawat. Terima kasih Premium Auto!',
+        avatar: 'https://i.pravatar.cc/150?u=dewi'
+    }
 ];
 
+const StarIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+        <path fillRule="evenodd" d="M10.868 2.884c.321-.662 1.215-.662 1.536 0l1.681 3.462 3.82.555c.734.107 1.028.997.494 1.51l-2.764 2.693.654 3.803c.124.72-.643 1.274-1.286.943L10 15.347l-3.417 1.795c-.643.33-1.41-.223-1.286-.943l.654-3.803-2.764-2.693c-.534-.513-.24-1.403.494-1.51l3.82-.555 1.681-3.462z" clipRule="evenodd" />
+    </svg>
+);
+
 const TestimonialSection: React.FC = () => {
-  return (
-    <section className="testimonial-section">
-      <div className="testimonial-section-header">
-        <h2>Apa Kata Pelanggan Kami?</h2>
-        <p>Pengalaman mereka adalah bukti komitmen kami terhadap kualitas dan kepuasan.</p>
-      </div>
-      <div className="testimonials-grid">
-        {testimonials.map(testimonial => (
-          <div key={testimonial.id} className="testimonial-card">
-            <p className="testimonial-message">"{testimonial.message}"</p>
-            <div className="testimonial-author">
-              <img className="author-image" src={testimonial.image} alt={testimonial.name} />
-              <div className="author-info">
-                <span className="author-name">{testimonial.name}</span>
-                <span className="author-role">{testimonial.role}{testimonial.company && `, ${testimonial.company}`}</span>
-              </div>
-              <div className="testimonial-rating">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                  </svg>
-                ))}
-              </div>
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            const scrollLeft = container.scrollLeft;
+            const cardWidth = container.scrollWidth / testimonials.length;
+            const newIndex = Math.round(scrollLeft / cardWidth);
+            setActiveIndex(newIndex);
+        };
+
+        container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return (
+        <section className="testimonial-section">
+            <div className="collection-header">
+                <h2>Apa Kata Pelanggan Kami</h2>
+                <p>Pengalaman mereka adalah bukti komitmen kami terhadap kualitas dan kepuasan.</p>
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+            <div className="testimonial-container" ref={containerRef}>
+                {testimonials.map(testimonial => (
+                    <div key={testimonial.id} className="testimonial-card">
+                        <div className="rating">
+                            {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
+                        </div>
+                        <p className="testimonial-quote">"{testimonial.quote}"</p>
+                        <div className="testimonial-author">
+                            <img src={testimonial.avatar} alt={testimonial.name} className="author-avatar" />
+                            <div className="author-info">
+                                <h4>{testimonial.name}</h4>
+                                <p>{testimonial.role}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div className="testimonial-dots">
+                {testimonials.map((_, index) => (
+                    <span key={index} className={`dot ${index === activeIndex ? 'active' : ''}`} />
+                ))}
+            </div>
+        </section>
+    );
 };
 
 export default TestimonialSection;

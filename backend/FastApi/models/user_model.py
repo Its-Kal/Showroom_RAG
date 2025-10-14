@@ -1,12 +1,19 @@
-from pydantic import BaseModel
+from typing import Optional
 from sqlmodel import Field, SQLModel
 
-class UserModel(SQLModel, table=True):
+# Database Model (SQLModel)
+class User(SQLModel, table=True):
     __tablename__ = "users"
-    id: int = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(index=True, unique=True)
+    password: str
+
+# API Model for creating a user
+class UserCreate(SQLModel):
     username: str
     password: str
 
-class User(BaseModel):
+# API Model for reading user data (without password)
+class UserRead(SQLModel):
+    id: int
     username: str
-    password: str
