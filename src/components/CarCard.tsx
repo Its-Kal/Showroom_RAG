@@ -25,7 +25,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           <p className="car-description">{car.description}</p>
         </div>
         <div className="detail-item car-actions-horizontal">
-          <span className={`status-badge ${car.status}`}>{car.status === 'available' ? 'Tersedia' : 'Dipesan'}</span>
+          <span className={`status-badge ${car.status}`}>{car.status === 'new' ? 'Tersedia' : 'Bekas'}</span>
           <Link to={`/koleksi/${car.id}`} className="btn-detail">Lihat Detail</Link>
         </div>
       </div>

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
@@ -7,10 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import database setup
-from database.config import create_db_and_tables
+from database import create_db_and_tables
 
 # Import routers
 from routes import car_routes, user_routes
+
+# Import models to ensure they are registered with Base
+from models import car_model, user_model
 
 # --- App Initialization ---
 @asynccontextmanager
@@ -20,6 +24,10 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+# --- Static Files ---
+# The /uploads path is now relative to the root of the project
+app.mount("/uploads", StaticFiles(directory="backend/FastApi/uploads"), name="uploads")
 
 # --- CORS Configuration ---
 origins = [

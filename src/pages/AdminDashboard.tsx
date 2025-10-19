@@ -16,24 +16,29 @@ const AdminDashboard: React.FC = () => {
     const [currentView, setCurrentView] = useState<AdminView>('add');
 
     // Form state
-    const [carName, setCarName] = useState('');
-    const [carPrice, setCarPrice] = useState('');
-    const [carDesc, setCarDesc] = useState('');
-    const [pdfFile, setPdfFile] = useState<File | null>(null);
+    const [name, setName] = useState('');
+    const [year, setYear] = useState('');
+    const [price, setPrice] = useState('');
+    const [description, setDescription] = useState('');
+    const [category, setCategory] = useState('');
+    const [status, setStatus] = useState('new');
+    const [acceleration, setAcceleration] = useState('');
+    const [fuelConsumption, setFuelConsumption] = useState('');
+    const [images, setImages] = useState('[]');
+    const [specifications, setSpecifications] = useState('{}');
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [brochureFile, setBrochureFile] = useState<File | null>(null);
     const [editId, setEditId] = useState<number | null>(null);
-    const [carYear, setCarYear] = useState('');
 
     const fetchCars = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/cars');
+            const response = await fetch('http://localhost:8000/cars/');
             if (!response.ok) throw new Error('Failed to fetch cars');
             const data: Car[] = await response.json();
             setCars(data);
         } catch (err: any) {
-            // Temporarily disable error message on initial fetch
             console.error(err.message);
-            // setMessage({ text: err.message, type: 'error' });
         } finally {
             setIsLoading(false);
         }
@@ -43,36 +48,60 @@ const AdminDashboard: React.FC = () => {
         fetchCars();
     }, []);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) setPdfFile(e.target.files[0]);
+    const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) setImageFile(e.target.files[0]);
+    };
+
+    const handleBrochureFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) setBrochureFile(e.target.files[0]);
     };
 
     const clearForm = () => {
-        setCarName('');
-        setCarPrice('');
-        setCarYear('');
-        setCarDesc('');
-        setPdfFile(null);
+        setName('');
+        setYear('');
+        setPrice('');
+        setDescription('');
+        setCategory('');
+        setStatus('new');
+        setAcceleration('');
+        setFuelConsumption('');
+        setImages('[]');
+        setSpecifications('{}');
+        setImageFile(null);
+        setBrochureFile(null);
         setEditId(null);
-        const fileInput = document.getElementById('pdf_file') as HTMLInputElement;
-        if(fileInput) fileInput.value = '';
+        // Reset file inputs
+        const imageInput = document.getElementById('image') as HTMLInputElement;
+        if(imageInput) imageInput.value = '';
+        const brochureInput = document.getElementById('brochure_image') as HTMLInputElement;
+        if(brochureInput) brochureInput.value = '';
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!imageFile || !brochureFile) {
+            setMessage({ text: 'Please select both a main image and a brochure image.', type: 'error' });
+            return;
+        }
+
         setMessage({ text: '', type: '' });
         setIsLoading(true);
 
         const formData = new FormData();
-        formData.append('car_name', carName);
-        formData.append('car_price', carPrice);
-        formData.append('car_desc', carDesc);
-        formData.append('car_year', carYear);
-        if (pdfFile) {
-            formData.append('pdf_file', pdfFile);
-        }
+        formData.append('name', name);
+        formData.append('year', year);
+        formData.append('price', price);
+        formData.append('description', description);
+        formData.append('category', category);
+        formData.append('status', status);
+        formData.append('acceleration', acceleration);
+        formData.append('fuelConsumption', fuelConsumption);
+        formData.append('images', images);
+        formData.append('specifications', specifications);
+        formData.append('image', imageFile);
+        formData.append('brochure_image', brochureFile);
 
-        const url = editId ? `http://localhost:8000/cars/${editId}` : 'http://localhost:8000/upload_car';
+        const url = editId ? `http://localhost:8000/cars/${editId}` : 'http://localhost:8000/cars/';
         const method = editId ? 'PUT' : 'POST';
 
         try {
@@ -80,7 +109,7 @@ const AdminDashboard: React.FC = () => {
             const result = await response.json();
             if (!response.ok) throw new Error(result.detail || (editId ? 'Failed to update car' : 'Failed to upload car'));
             
-            setMessage({ text: result.message, type: 'success' });
+            setMessage({ text: editId ? 'Car updated successfully' : 'Car added successfully', type: 'success' });
             clearForm();
             await fetchCars();
         } catch (error: any) {
@@ -92,10 +121,16 @@ const AdminDashboard: React.FC = () => {
 
     const handleEdit = (car: Car) => {
         setEditId(car.id);
-        setCarName(car.name);
-        setCarPrice(car.price);
-        setCarYear(car.year);
-        setCarDesc(car.description);
+        setName(car.name);
+        setPrice(String(car.price));
+        setYear(String(car.year));
+        setDescription(car.description);
+        setCategory(car.category);
+        setStatus(car.status);
+        setAcceleration(car.acceleration);
+        setFuelConsumption(car.fuelConsumption);
+        setImages(JSON.stringify(car.images));
+        setSpecifications(JSON.stringify(car.specifications));
         setMessage({ text: '', type: '' });
         setCurrentView('add');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -106,10 +141,11 @@ const AdminDashboard: React.FC = () => {
             setIsLoading(true);
             try {
                 const response = await fetch(`http://localhost:8000/cars/${id}`, { method: 'DELETE' });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.detail || 'Failed to delete car');
-                
-                setMessage({ text: result.message, type: 'success' });
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.detail || 'Failed to delete car');
+                }
+                setMessage({ text: 'Car deleted successfully', type: 'success' });
                 await fetchCars();
             } catch (error: any) {
                 setMessage({ text: error.message, type: 'error' });
@@ -156,24 +192,55 @@ const AdminDashboard: React.FC = () => {
                         <form onSubmit={handleSubmit} className="admin-form">
                             {message.text && <p className={`message ${message.type}`}>{message.text}</p>}
                             <div className="form-group">
-                                <label htmlFor="car_name">Car Name</label>
-                                <input type="text" id="car_name" value={carName} onChange={(e) => setCarName(e.target.value)} required />
+                                <label htmlFor="name">Car Name</label>
+                                <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="car_year">Year</label>
-                                <input type="number" id="car_year" value={carYear} onChange={(e) => setCarYear(e.target.value)} required />
+                                <label htmlFor="year">Year</label>
+                                <input type="number" id="year" value={year} onChange={(e) => setYear(e.target.value)} required />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="car_price">Car Price</label>
-                                <input type="text" id="car_price" value={carPrice} onChange={(e) => setCarPrice(e.target.value)} required placeholder="e.g., Rp 1.500.000.000" />
+                                <label htmlFor="price">Car Price</label>
+                                <input type="number" id="price" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="e.g., 1500000000" />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="car_desc">Car Description</label>
-                                <textarea id="car_desc" value={carDesc} onChange={(e) => setCarDesc(e.target.value)} required rows={4} />
+                                <label htmlFor="description">Car Description</label>
+                                <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required rows={4} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="pdf_file">PDF Brochure (optional for updates)</label>
-                                <input type="file" id="pdf_file" accept="application/pdf" onChange={handleFileChange} />
+                                <label htmlFor="category">Category</label>
+                                <input type="text" id="category" value={category} onChange={(e) => setCategory(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="status">Status</label>
+                                <select id="status" value={status} onChange={(e) => setStatus(e.target.value)} required>
+                                    <option value="new">New</option>
+                                    <option value="used">Used</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="acceleration">Acceleration</label>
+                                <input type="text" id="acceleration" value={acceleration} onChange={(e) => setAcceleration(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="fuelConsumption">Fuel Consumption</label>
+                                <input type="text" id="fuelConsumption" value={fuelConsumption} onChange={(e) => setFuelConsumption(e.target.value)} required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="images">Images (JSON array of strings)</label>
+                                <textarea id="images" value={images} onChange={(e) => setImages(e.target.value)} required rows={2} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="specifications">Specifications (JSON object)</label>
+                                <textarea id="specifications" value={specifications} onChange={(e) => setSpecifications(e.target.value)} required rows={4} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="image">Main Car Image</label>
+                                <input type="file" id="image" accept="image/*" onChange={handleImageFileChange} required={!editId} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="brochure_image">Brochure Image</label>
+                                <input type="file" id="brochure_image" accept="image/*" onChange={handleBrochureFileChange} required={!editId} />
                             </div>
                             <div className="form-actions">
                                 <button type="submit" className="btn-submit-car">{editId ? 'Update Car' : 'Submit Car'}</button>
@@ -201,7 +268,7 @@ const AdminDashboard: React.FC = () => {
                                         <tr key={car.id}>
                                             <td>{car.name}</td>
                                             <td>{car.year}</td>
-                                            <td>{car.price}</td>
+                                            <td>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(car.price)}</td>
                                             <td className="car-actions">
                                                 <button className="btn-edit" onClick={() => handleEdit(car)}>Edit</button>
                                                 <button className="btn-delete" onClick={() => handleDelete(car.id)}>Delete</button>

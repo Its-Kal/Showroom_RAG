@@ -17,8 +17,8 @@ const EyeSlashIcon = ({ ...props }) => (
 );
 
 const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
-    const [username, setUsername] = useState('user1'); // Pre-filled for demo
-    const [password, setPassword] = useState('password123'); // Pre-filled for demo
+    const [username, setUsername] = useState(''); // Pre-filled for demo
+    const [password, setPassword] = useState(''); // Pre-filled for demo
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +53,7 @@ const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                 setIsSuccess(false);
             }
         } catch (error) {
-            setMessage('An error occurred. Is the backend server running?');
+            setMessage('Backend Belum Jalan');
             setIsSuccess(false);
             console.error('Login error:', error);
         }
