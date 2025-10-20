@@ -1,0 +1,226 @@
+/* General Page Styling */
+.about-page {
+    /* Menggunakan warna krem yang sama dengan tema utama situs */
+    background-color: #FFF9F3;
+}
+
+/* Hero Section */
+/* Tidak ada perubahan di sini, hero section sudah terlihat bagus */
+.about-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80') no-repeat center center/cover;
+    color: white;
+    padding: 6rem 2rem;
+    text-align: center;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.about-hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.about-hero-content p {
+    font-size: 1.25rem;
+    font-weight: 300;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Main Content */
+.about-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+.about-section {
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+/* Animation Styling */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Vision & Mission Section */
+.vision-mission {
+    text-align: left;
+}
+
+.quote-paragraph {
+    background-color: #e9ecef;
+    border-left: 4px solid #3B597B; /* Warna aksen utama */
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem !important; /* Override margin default */
+    border-radius: 0 4px 4px 0;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #4a4a4a;
+    max-width: 100% !important; /* Override max-width default */
+}
+
+.vision-mission-text h2 {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.about-section h2 {
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem; /* Sedikit lebih banyak spasi */
+    color: #212529;
+}
+
+.about-section p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    /* Warna teks yang sedikit lebih gelap untuk kontras yang lebih baik */
+    color: #4a4a4a; 
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+}
+
+/* Values Section */
+.values-section {
+    margin-top: 6rem;
+}
+/* Values Section */
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2.5rem;
+    align-items: start; /* Mencegah kartu meregang untuk menyamai tinggi */
+}
+
+.value-card {
+    /* Mengganti background solid menjadi gradien */
+    background: linear-gradient(to right, #3B597B, #1e293b);
+    padding: 1.5rem 2rem;
+    border-radius: 12px; /* Radius lebih besar untuk tampilan lebih lembut */
+    border: none; /* Menghapus border karena sudah menggunakan gradien */
+    box-shadow: 0 8px 25px rgba(59, 89, 123, 0.2); /* Bayangan yang lebih tegas */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: white; /* Mengubah warna teks default menjadi putih */
+    cursor: pointer;
+}
+
+.value-card:hover {
+    /* Efek hover yang lebih menonjol, konsisten dengan kartu di homepage */
+    box-shadow: 0 12px 30px rgba(59, 89, 123, 0.3); /* Hanya mengubah bayangan, tanpa mengangkat kartu */
+}
+
+.value-card-header {
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.value-icon {
+    width: 40px;
+    height: 40px;
+    color: #ffffff; /* Mengubah warna ikon menjadi putih */
+    margin-right: 1rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.toggle-icon {
+    width: 24px;
+    height: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: auto;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    flex-shrink: 0;
+}
+
+.value-card h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #ffffff; /* Mengubah warna judul menjadi putih */
+}
+
+/* Card Body for description */
+.value-card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), padding-top 0.5s ease;
+}
+
+.value-card-body p {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.85); /* Putih dengan sedikit transparansi agar lebih lembut */
+    line-height: 1.6;
+    text-align: left;
+    margin: 0;
+    max-width: 100%;
+}
+
+/* Active (expanded) state */
+.value-card.active .value-card-body {
+    max-height: 200px; /* Adjust as needed */
+    padding-top: 1.5rem;
+}
+
+.value-card.active .toggle-icon {
+    transform: rotate(45deg);
+}
+
+.value-card:hover .value-icon {
+    transform: scale(1.1);
+}
+
+/* CTA Section */
+.cta-section {
+    /* Menghapus warna latar abu-abu agar menyatu dengan halaman */
+    background-color: transparent;
+    padding: 4rem 2rem;
+    border-radius: 8px;
+    border-top: 1px solid #e9ecef; /* Garis pemisah halus */
+    margin-top: 4rem;
+}
+
+.btn-cta {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.9rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #4a698c, #3B597B); /* Gradien yang sama dengan tombol login */
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 89, 123, 0.2);
+}
+
+.btn-cta:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #3B597B, #1e293b);
+    box-shadow: 0 7px 20px rgba(59, 89, 123, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vision-mission {
+        text-align: center;
+    }
+
+    .vision-mission-text h2 {
+        text-align: center;
+    }
+}
