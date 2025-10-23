@@ -1,7 +1,7 @@
 :root {
-  --admin-bg: #FFF9F3; /* Menyesuaikan dengan background utama website */
-  --sidebar-bg: #ffffff;
-  --content-bg: #ffffff;
+  --admin-bg: #FFF9F3; /* Mengubah background menjadi krem */
+  --sidebar-bg: #ffffff; /* Sidebar tetap putih */
+
   --border-color: #e9ecef;
   --text-primary: #212529;
   --text-secondary: #6c757d;
@@ -15,6 +15,9 @@
   --success-text: #155724;
   --error-bg: #f8d7da;
   --error-text: #721c24;
+  /* New Gradient Variables */
+  --button-gradient: linear-gradient(135deg, #4a698c, #3B597B);
+  --button-gradient-hover: linear-gradient(135deg, #3B597B, #1e293b);
 }
 
 /* Layout Utama */
@@ -23,34 +26,39 @@
   grid-template-columns: 250px 1fr;
   min-height: 100vh;
   background-color: var(--admin-bg);
-  /* Memberi ruang di bagian atas untuk header yang posisinya fixed */
-  padding-top: 90px;
 }
 
 /* Sidebar */
 .admin-sidebar {
-  background-color: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
+  background-color: transparent; /* Membuat sidebar transparan */
+  border-right: 1px solid var(--border-color); /* Menambah garis pemisah */
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1rem;
+  position: sticky; /* Membuat sidebar tetap di posisi */
+  top: 0; /* Menempel di bagian paling atas container-nya */
+  height: 100vh; /* Tinggi sidebar = tinggi viewport */
+  overflow-y: auto; /* Tambahkan scroll jika konten sidebar panjang */
 }
 
 .sidebar-header {
-  padding: 0 0.5rem 1.5rem 0.5rem;
+  /* Margin negatif untuk membuat background membentang penuh di sidebar */
+  margin: -1.5rem -1rem 1.5rem -1rem;
+  padding: 1.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  background: var(--button-gradient); /* Menerapkan gradien */
+  border-bottom: 1px solid var(--accent-color-hover);
 }
 
 .sidebar-header h3 {
-  color: var(--text-primary);
+  color: white; /* Mengubah warna judul menjadi putih */
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0;
 }
 
 .sidebar-header p {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.8); /* Mengubah warna subjudul menjadi putih transparan */
   font-size: 0.85rem;
   margin: 0.25rem 0 0 0;
 }
@@ -75,6 +83,7 @@
   margin-bottom: 0.5rem;
   border-radius: 6px;
   border: none;
+  position: relative; /* Diperlukan untuk pseudo-element garis */
   background-color: transparent;
   color: var(--text-secondary);
   font-weight: 500;
@@ -83,25 +92,27 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.sidebar-nav li button:hover {
-  background-color: var(--admin-bg);
+.sidebar-nav li button:hover,
+.sidebar-nav li button.active {
   color: var(--text-primary);
+  background-color: rgba(59, 89, 123, 0.05); /* Latar belakang lembut saat hover/active */
 }
 
 .sidebar-nav li button.active {
-  background-color: #eef2ff; /* Latar belakang biru muda untuk item aktif */
   color: var(--accent-color); /* Teks menjadi warna biru navy */
   font-weight: 600;
 }
 
-.btn-add-new {
-  background-color: var(--accent-color) !important;
-  color: white !important;
-  font-weight: 600;
-}
-
-.btn-add-new:hover {
-  background-color: var(--accent-color-hover) !important;
+/* Garis vertikal untuk item yang aktif */
+.sidebar-nav li button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 4px;
+  background-color: var(--accent-color);
+  border-radius: 0 4px 4px 0;
 }
 
 .sidebar-footer {
@@ -124,31 +135,48 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.sidebar-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .sidebar-footer button:hover {
-  background-color: #fee2e2; /* Latar belakang merah muda saat hover */
+  background-color: rgba(220, 53, 69, 0.1); /* Latar belakang merah transparan */
   color: var(--delete-color); /* Warna teks menjadi merah */
+  border-color: var(--delete-color); /* Border merah saat hover */
 }
 
 /* Konten Utama */
 .admin-content {
-  padding: 2rem;
+  padding-top: 2rem;
   overflow-y: auto;
+  background-color: transparent; /* Membuat area konten utama transparan */
 }
 
 .admin-content h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
+  font-size: 1.6rem; /* Sedikit diperkecil agar lebih seimbang */
+  font-weight: 600;
+  color: white; /* Mengubah warna judul menjadi putih */
+  /* Margin negatif untuk membuat background membentang penuh, padding untuk mengembalikan posisi teks */
+  margin: -2rem -2rem 2rem -2rem;
+  padding: 1.9rem 2rem;;
+  background: var(--button-gradient); /* Menerapkan gradien yang sama dengan tombol */
+  border-bottom: 1px solid var(--accent-color-hover);
 }
 
 /* Styling untuk Form, Table, dll. */
 .content-view {
-  background-color: transparent; /* Mengubah background menjadi transparan */
+  background-color: transparent; /* Membuat panel konten transparan */
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: none; /* Menghapus bayangan */
-  border: none; /* Menghapus garis tepi */
+  /* Menghapus border dan shadow karena panel sudah transparan */
+  padding-top: 0; /* Menghilangkan padding atas agar lebih rapat dengan judul */
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Kolom nama lebih besar dari tahun */
+  gap: 1.5rem;
 }
 
 .admin-form .form-group {
@@ -165,12 +193,20 @@
 .admin-form input,
 .admin-form textarea,
 .admin-form select {
-  width: 100%;
-  padding: 0.75rem;
+  width: 100%;  
+  padding: 0.6rem 0.75rem; /* Padding vertikal diperkecil agar lebih ramping */
   border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: 6px; /* Radius disamakan dengan elemen lain */
+  font-size: 0.95rem; /* Ukuran font sedikit diperkecil */
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-error-feedback {
+  color: var(--delete-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: block;
 }
 
 .admin-form input:focus,
@@ -178,22 +214,99 @@
 .admin-form select:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.25);
+  box-shadow: 0 0 0 2px rgba(59, 89, 123, 0.25); /* Shadow biru yang konsisten */
+}
+
+/* Custom File Upload Styling */
+.file-upload-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-input-hidden {
+  display: none; /* Sembunyikan input file asli */
+}
+
+.custom-file-upload {
+  display: flex; /* Menggunakan flexbox untuk alignment */
+  align-items: center;
+  justify-content: space-between; /* Memberi ruang antara nama file dan tombol hapus */
+  width: auto; /* Mengatur lebar sesuai konten */
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background-color 0.2s, border-color 0.2s;
+  margin-right: 10px; /* Spasi antara input file dan elemen lain */
+}
+
+.custom-file-upload:hover {
+  background-color: #e9ecef;
+  border-color: var(--accent-color);
+}
+.custom-file-upload > span {
+  margin-left: 0.5rem; /* Jarak antara ikon dan teks */
+}   
+
+.file-name-text {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+.btn-remove-file {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.btn-remove-file:hover {
+  color: var(--delete-color);
 }
 
 .btn-submit-car {
-  background-color: var(--accent-color);
+  background: var(--button-gradient); /* Gradien sebagai default */
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(59, 89, 123, 0.15);
+}
+
+.btn-submit-car:hover {
+  background: var(--button-gradient-hover); /* Gradien lebih gelap saat hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 89, 123, 0.25);
+}
+
+.btn-cancel-edit {
+  background-color: #6c757d; /* Warna abu-abu untuk tombol sekunder */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
   transition: background-color 0.2s ease;
 }
-
-.btn-submit-car:hover {
-  background-color: var(--accent-color-hover);
+.btn-cancel-edit:hover {
+  background-color: #5a6268;
 }
 
 /* Manage Cars View */
@@ -217,21 +330,33 @@
 
 .car-actions button {
   border: none;
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 0.8rem;
   border-radius: 4px;
   color: white;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
   transition: background-color 0.2s ease;
+  display: inline-flex; /* Agar ikon dan teks sejajar */
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.car-actions button svg {
+  width: 16px;
+  height: 16px;
 }
 
 .car-actions .btn-edit {
-  background-color: var(--accent-color);
+  background: var(--button-gradient); /* Gradien sebagai default */
   margin-right: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 .car-actions .btn-edit:hover {
-  background-color: var(--accent-color-hover);
+  background: var(--button-gradient-hover); /* Gradien lebih gelap saat hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .car-actions .btn-delete {
@@ -246,6 +371,7 @@
   margin-top: 1rem;
   padding: 1rem;
   background-color: #e9ecef;
+
   border-left: 4px solid var(--accent-color);
   color: var(--text-secondary);
   border-radius: 4px;
@@ -254,9 +380,10 @@
 /* Pesan Sukses/Error */
 .message {
   padding: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem; /* Beri jarak lebih dari konten di bawahnya */
   border-radius: 4px;
   text-align: center;
+  border: 1px solid transparent;
 }
 
 .message.success {
@@ -268,3 +395,110 @@
   background-color: var(--error-bg);
   color: var(--error-text);
 }
+
+/* ChatBot Popup Styles */
+.chat-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  z-index: 1000;
+}
+
+.chat-fab:hover {
+  transform: scale(1.1);
+  background-color: var(--accent-color-hover);
+}
+
+.chat-popup-container {
+  position: fixed;
+  bottom: 6.5rem;
+  right: 2rem;
+  width: 370px;
+  max-width: 90vw;
+  height: 70vh;
+  max-height: 550px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-modern-container {
+  height: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.chat-header {
+  justify-content: center; /* Memusatkan konten header */
+}
+
+/* --- Responsive Table --- */
+@media screen and (max-width: 768px) {
+  .car-management-table {
+    border: 0;
+  }
+
+  .car-management-table thead {
+    display: none; /* Sembunyikan header tabel */
+  }
+
+  .car-management-table tr {
+    display: block; /* Ubah baris menjadi seperti kartu */
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .car-management-table td {
+    display: block;
+    text-align: right; /* Ratakan konten ke kanan */
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+  }
+
+  .car-management-table td::before {
+    content: attr(data-label); /* Ambil label dari atribut data-label */
+    position: absolute;
+    left: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .car-actions .btn-edit span,
+  .car-actions .btn-delete span {
+    display: none; /* Sembunyikan teks tombol di mobile, hanya ikon */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr; /* Kembali ke 1 kolom di layar sangat kecil */
+    gap: 0; /* Hilangkan gap agar form-group bisa mengatur marginnya sendiri */
+  }
+} 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import '../App.css';
 
 const testimonials = [
@@ -39,51 +39,32 @@ const StarIcon = () => (
 );
 
 const TestimonialSection: React.FC = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const handleScroll = () => {
-            const scrollLeft = container.scrollLeft;
-            const cardWidth = container.scrollWidth / testimonials.length;
-            const newIndex = Math.round(scrollLeft / cardWidth);
-            setActiveIndex(newIndex);
-        };
-
-        container.addEventListener('scroll', handleScroll);
-        return () => container.removeEventListener('scroll', handleScroll);
-    }, []);
-
     return (
         <section className="testimonial-section">
             <div className="collection-header">
                 <h2>Apa Kata Pelanggan Kami</h2>
                 <p>Pengalaman mereka adalah bukti komitmen kami terhadap kualitas dan kepuasan.</p>
             </div>
-            <div className="testimonial-container" ref={containerRef}>
-                {testimonials.map(testimonial => (
-                    <div key={testimonial.id} className="testimonial-card">
-                        <div className="rating">
-                            {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
-                        </div>
-                        <p className="testimonial-quote">"{testimonial.quote}"</p>
-                        <div className="testimonial-author">
-                            <img src={testimonial.avatar} alt={testimonial.name} className="author-avatar" />
-                            <div className="author-info">
-                                <h4>{testimonial.name}</h4>
-                                <p>{testimonial.role}</p>
+            {/* Container untuk efek marquee/geser */}
+            <div className="testimonial-container-autoscroll">
+                {/* Trek yang akan digeser, berisi dua set testimoni untuk loop yang mulus */}
+                <div className="testimonial-track">
+                    {[...testimonials, ...testimonials].map((testimonial, index) => (
+                        <div key={index} className="testimonial-card">
+                            <div className="rating">
+                                {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
+                            </div>
+                            <p className="testimonial-quote">"{testimonial.quote}"</p>
+                            <div className="testimonial-author">
+                                <img src={testimonial.avatar} alt={testimonial.name} className="author-avatar" />
+                                <div className="author-info">
+                                    <h4>{testimonial.name}</h4>
+                                    <p>{testimonial.role}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-            <div className="testimonial-dots">
-                {testimonials.map((_, index) => (
-                    <span key={index} className={`dot ${index === activeIndex ? 'active' : ''}`} />
-                ))}
+                    ))}
+                </div>
             </div>
         </section>
     );

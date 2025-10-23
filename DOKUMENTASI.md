@@ -51,7 +51,7 @@ Folder ini berisi komponen-komponen yang mewakili satu halaman penuh.
 
 ### `AboutPage.tsx`
 - **Fungsi:** Halaman statis "Tentang Kami".
-- **Struktur:** Berisi teks dan gambar yang menjelaskan tentang perusahaan.
+- **Struktur:** Berisi teks yang menjelaskan visi, misi, dan nilai-nilai dari Garasix Showroom.
 
 ### `CarListPage.tsx` & `CarDetailPage.tsx`
 - **Fungsi:** `CarListPage.tsx` menampilkan seluruh koleksi mobil. `CarDetailPage.tsx` menampilkan detail lengkap dari satu mobil yang dipilih.
@@ -72,7 +72,7 @@ Folder ini berisi komponen-komponen yang mewakili satu halaman penuh.
 
 ### `ChatBot.tsx`
 - **Fungsi:** Mengimplementasikan chatbot interaktif untuk rekomendasi mobil.
-- **Cara Kerja:** Mengirim pesan pengguna ke layanan webhook eksternal dan menampilkan respons dari bot.
+- **Cara Kerja:** Mengirim pesan pengguna ke layanan webhook eksternal (n8n) dan menampilkan respons dari bot AI untuk membantu pengguna.
 
 ### `NotFoundPage.tsx`
 - **Fungsi:** Halaman yang ditampilkan ketika pengguna mengunjungi URL yang tidak ada.

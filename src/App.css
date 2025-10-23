@@ -1,11 +1,24 @@
 :root {
     --premium-blue: #007bff;
+    --accent-color-hover: #0056b3;
     --premium-blue-dark: #0056b3;
+    --cream-bg: #FFF9F3;
     --dark-bg: #0f172a;
     --light-text: #cbd5e1;
     --shadow-elevated: 0 10px 20px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
+/* Animasi Fade-in saat scroll */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(30px); /* Mulai sedikit dari bawah */
+    transition: opacity 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 /*========================================= Global ============================================*/
 * {
     margin: 0;
@@ -27,7 +40,7 @@ body {
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color:#FFF9F3;
+    background-color: var(--cream-bg);
     color: #111827;
     line-height: 1.6;
 }
@@ -65,7 +78,7 @@ body {
 }
 
 .header.scrolled {
-    background-color: #ffffff; /* Diubah ke putih bersih untuk kontras */
+    background-color: var(--cream-bg); /* Warna sama dengan background body */
     color: #111827; /* Warna teks menjadi gelap agar kontras */
     padding: 1rem 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -80,10 +93,13 @@ body {
     max-width: 1400px;
 }
 
+
+
 .logo a {
     text-decoration: none;
     color: #FFF9F3;
     transition: color 0.4s ease;
+
 }
 
 .header.scrolled .logo a {
@@ -169,7 +185,7 @@ body {
     background: transparent;
     border: 1px solid #FFF9F3;
     color: #FFF9F3;
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1.2rem; /* Padding vertikal dikurangi agar lebih ramping */
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
@@ -187,15 +203,15 @@ body {
 }
 
 .header.scrolled .consult-btn {
-    background: #3B597B; /* Menyamakan dengan .btn-detail */
-    color: #FFF9F3; /* Warna teks putih */
-    border-color: #3B597B;
+    background: transparent; /* Latar belakang transparan agar menyatu */
+    color: #111827; /* Warna teks sama dengan nav-links */
+    border-color: #d1d5db; /* Border abu-abu tipis agar tidak terlalu menonjol */
 }
 
 .header.scrolled .consult-btn:hover {
-    background: #1e293b; /* Menyamakan dengan hover .btn-detail */
-    border-color: #1e293b;
-    box-shadow: var(--shadow-elevated);
+
+    border-color: #d1d5db;
+    box-shadow: none; /* Menghapus shadow agar tetap terlihat flat */
 }
 
 .consult-btn-mobile {
@@ -291,83 +307,12 @@ body {
     z-index: 1;
 }
 
-.hero-content {
-    text-align: center;
-    color: #FFF9F3;
-    z-index: 2;
-    max-width: 800px;
-    padding: 2rem;
-}
-
-.hero h1 {
-    font-size: 4rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.hero p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.btn-primary {
-    background-color: #1e293b; /* Warna hover dari .btn-detail */
-    color: #ffffff;
-    padding: 0.6rem 1.2rem; /* Disesuaikan agar sama dengan .consult-btn */
-    border: 1px solid #1e293b;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    gap: 0.5rem;    text-decoration: none; /* Menghilangkan garis bawah dari Link */
-    transition: all 0.3s ease;
-    font-weight: 600;
-    font-size: 0.9rem; /* Disesuaikan agar sama dengan .consult-btn */
-}
-
-.btn-primary:hover {
-    background: #0f172a; /* Warna lebih gelap untuk efek hover */
-    border-color: #0f172a;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: #FFF9F3;
-    border: 1px solid #FFF9F3;    padding: 0.6rem 1.2rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none; /* Menghilangkan garis bawah dari Link */
-    transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 249, 243, 0.1);
-    backdrop-filter: blur(2px);
-    transform: translateY(-2px);
-}
-
-
 /* === COLLECTION SECTION === */
 
 .collection-section {
     padding: 4rem 2rem;
     padding: 4rem 0; /* Padding vertikal, horizontal diatur oleh container */
-    background-color: #FFF9F3;
+    background-color: var(--cream-bg);
     overflow: hidden; /* Mencegah shadow atau tombol navigasi keluar layout */
 }
 
@@ -422,6 +367,7 @@ body {
 
 .collection-header {
     text-align: center;
+    margin-bottom: 2rem; /* Menambahkan jarak bawah untuk semua header koleksi/testimoni */
 }
 
 .collection-header h2 {
@@ -504,7 +450,7 @@ body {
 
 /* Mengubah CarCard menjadi lebih modern dan elegan */
 .car-card-new {
-  background-color: #FFF9F3;
+  background-color: var(--cream-bg);
   border-radius: 0;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow lebih halus */
@@ -695,7 +641,7 @@ body {
   background: #3B597B; /* Warna biru tua/navy */
   color: #ffffff; /* Warna teks putih */
   border: none;
-  padding: 0.8rem 1rem;
+  padding: 0.6rem 1rem; /* Padding vertikal dikurangi */
   border-radius: 4px; /* Rounded corners halus */
   cursor: pointer;
   font-size: 0.9rem;
@@ -713,36 +659,56 @@ body {
   transform: translateY(-2px);
 }
 
+/* Definisikan animasi geser untuk testimonial */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Geser ke kiri sejauh setengah dari total lebar (karena kita punya 2 set data) */
+    transform: translateX(-50%);
+  }
+}
+
+/* Kontainer luar yang menyembunyikan overflow dan memberi efek fade di tepi */
+.testimonial-container-autoscroll {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+  mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+}
+
+/* Trek yang berisi semua kartu dan yang akan dianimasikan */
+.testimonial-track {
+  display: flex;
+  /* (lebar kartu 350px + gap 24px) * 8 kartu (4x2) */
+  width: calc(374px * 8);
+  animation: scroll 40s linear infinite; /* Durasi animasi bisa disesuaikan */
+}
+
+/* Beri sedikit jeda saat kursor diarahkan ke trek */
+.testimonial-track:hover {
+  animation-play-state: paused;
+}
+
 /* === TESTIMONIAL SECTION === */
 .testimonial-section {
     padding: 4rem 0; /* Padding vertikal, horizontal diatur di container */
-    background-color: #FFF9F3;
+    background-color: var(--cream-bg);
     overflow: hidden; /* Mencegah shadow terpotong */
 }
 
-.testimonial-container {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 1.5rem; /* 24px */
-    padding: 1rem 2rem; /* Padding horizontal untuk ruang di awal dan akhir */
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch; /* Scroll halus di iOS */
-    scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
-}
-
-.testimonial-container::-webkit-scrollbar {
-    display: none; /* Sembunyikan scrollbar di Chrome, Safari, Opera */
-}
 
 .testimonial-card {
     flex: 0 0 350px; /* Lebar tetap 350px, tidak mengecil */
-    background: #ffffff;
+    background: linear-gradient(to right, #3B597B, #1e293b); /* Gradien sama dengan tombol utama */
     border-radius: 0;
     padding: 2rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    scroll-snap-align: start; /* Kartu akan berhenti di awal saat scroll */
+    border: none; /* Menghapus border karena sudah menggunakan gradien */
+    margin: 0 12px; /* Setengah dari gap lama (24px / 2) */
+    flex-shrink: 0; /* Mencegah kartu menyusut */
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -756,6 +722,7 @@ body {
 @media (max-width: 768px) {
     .testimonial-card {
         flex-basis: 85vw; /* Lebar kartu 85% dari lebar viewport di mobile */
+        width: 85vw;
     }
     .testimonial-container {
         padding: 1rem 1.5rem;
@@ -770,7 +737,7 @@ body {
 
 .testimonial-quote {
     font-size: 1rem;
-    color: #4b5563;
+    color: #cbd5e1; /* Warna teks terang agar kontras */
     line-height: 1.6;
     flex-grow: 1; /* Membuat kutipan mengisi ruang yang tersedia */
     margin-bottom: 1.5rem;
@@ -782,7 +749,7 @@ body {
     gap: 1rem;
     margin-top: auto; /* Mendorong author ke bawah */
     padding-top: 1rem;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid #334155; /* Garis pemisah yang lebih gelap */
 }
 
 .author-avatar {
@@ -795,34 +762,19 @@ body {
 .author-info h4 {
     font-size: 1rem;
     font-weight: 600;
-    color: #111827;
+    color: #FFF9F3; /* Warna nama menjadi terang */
 }
 
 .author-info p {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: #cbd5e1; /* Warna role menjadi terang */
     margin: 0;
 }
 
 /* === INDIKATOR SCROLL TESTIMONI === */
 .testimonial-dots {
-    text-align: center;
-    margin-top: 2rem;
-}
-
-.testimonial-dots .dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #d1d5db; /* Warna dot tidak aktif */
-    margin: 0 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.testimonial-dots .dot.active {
-    background-color: #3B597B; /* Warna dot aktif (biru tua) */
-    transform: scale(1.2);
+    /* Hapus navigasi titik sesuai permintaan */
+    display: none;
 }
 /* === FOOTER === */
 
@@ -830,6 +782,12 @@ body {
     background-color: #0f172a;
     color: #e2e8f0;
     padding: 4rem 2rem;
+}
+
+.logo-footer img {
+  height: 90px; /* Menetapkan tinggi logo di footer */
+  width: auto;
+  margin-bottom: 1rem; /* Memberi jarak ke teks di bawahnya */
 }
 
 .footer-content {
@@ -977,7 +935,8 @@ body {
     max-width: 1200px;
     margin: 4rem auto; /* Memberi jarak dari header dan footer */
     padding: 2rem;
-    background-color: #FFF9F3;    border-radius: 0;
+    background-color: var(--cream-bg);
+    border-radius: 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: grid;
     grid-template-columns: 1fr; /* Default 1 kolom untuk mobile */
@@ -1094,7 +1053,7 @@ body {
 .car-detail-actions .btn-primary,
 .car-detail-actions .btn-secondary {
     flex: 1; /* Membuat kedua tombol memiliki lebar yang sama */
-    padding: 0.8rem 1.5rem;
+    padding: 0.6rem 1.5rem; /* Padding vertikal dikurangi */
     font-size: 1rem;
     font-weight: 600;    border-radius: 4px;
     text-align: center;
@@ -1125,4 +1084,312 @@ body {
 
 .car-detail-actions .btn-secondary:hover {
     background-color: #e5e7eb;
+}
+
+/* ===== PENANDA: KODE BARU UNTUK HALAMAN CHATBOT DIMULAI DARI SINI ===== */
+
+/* Container Halaman Chat */
+.chat-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px); /* Sesuaikan dengan tinggi header/footer jika ada */
+    padding: 2rem;
+    background-color: var(--cream-bg); /* Latar belakang halaman yang netral */
+}
+
+/* Container Utama Chat Modern */
+.chat-modern-container {
+    width: 100%;
+    max-width: 450px; /* Lebar yang lebih ramping */
+    height: 70vh;
+    max-height: 700px;
+    background-color: #ffffff; /* Kontainer chat tetap putih untuk kontras */
+    border-radius: 16px; /* Sudut lebih membulat */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header Chat */
+.chat-header {
+    background: #1e293b; /* Biru navy gelap */
+    color: #FFF9F3;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #334155;
+    flex-shrink: 0;
+}
+
+.chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ai-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #3B597B;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-avatar svg {
+    width: 24px;
+    height: 24px;
+    color: #FFF9F3;
+}
+
+.chat-header-info h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chat-header-info p {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin: 0;
+    color: #94a3b8;
+}
+
+/* Badan Chat (Area Pesan) */
+.chat-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Wrapper untuk setiap gelembung pesan */
+.chat-bubble-wrapper {
+    display: flex;
+    max-width: 80%;
+}
+
+.chat-bubble-wrapper.user {
+    align-self: flex-end;
+    justify-content: flex-end;
+}
+
+.chat-bubble-wrapper.ai {
+    align-self: flex-start;
+}
+
+/* Gelembung Pesan */
+.chat-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.chat-bubble.ai {
+    background-color: #e5e7eb;
+    color: #111827;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.user {
+    background-color: #3B597B; /* Biru tua */
+    color: #FFF9F3;
+    border-bottom-right-radius: 4px;
+}
+
+/* Animasi "mengetik" */
+.chat-bubble.typing {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 1rem;
+}
+.chat-bubble.typing span {
+    width: 8px;
+    height: 8px;
+    background-color: #94a3b8;
+    border-radius: 50%;
+    animation: typing-bounce 1.2s infinite ease-in-out;
+}
+.chat-bubble.typing span:nth-child(2) { animation-delay: -0.2s; }
+.chat-bubble.typing span:nth-child(3) { animation-delay: -0.4s; }
+
+@keyframes typing-bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1.0); }
+}
+
+/* Quick Replies */
+.quick-replies {
+    padding: 0 1.5rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.quick-reply-btn {
+    background-color: transparent;
+    border: 1px solid #3B597B;
+    color: #3B597B;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.quick-reply-btn:hover {
+    background-color: #3B597B;
+    color: #FFF9F3;
+}
+
+/* Area Input Pesan */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    gap: 0.75rem;
+}
+
+.chat-input {
+    flex-grow: 1;
+    border: none;
+    background-color: #f3f4f6;
+    padding: 0.75rem 1rem;
+    border-radius: 20px;
+    font-size: 0.95rem;
+}
+.chat-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 89, 123, 0.3);
+}
+
+.chat-send-btn {
+    background-color: #3B597B;
+    color: #FFF9F3;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+.chat-send-btn:hover {
+    background-color: #1e293b;
+}
+.chat-send-btn:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* === AI Promo Popup === */
+.promo-popup-container {
+  position: fixed;
+  bottom: 2rem;
+  right: calc(2rem + 60px + 1rem); /* right-pos + fab-width + gap */
+  width: 280px; /* Lebar dikurangi */
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem; /* Padding dikurangi */
+  border: 1px solid #e5e7eb;
+  animation: promo-slide-up 0.5s ease-out forwards;
+}
+
+@keyframes promo-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.promo-popup-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.promo-popup-close:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.promo-popup-content h3 {
+  font-size: 1.1rem; /* Ukuran font judul dikurangi */
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.promo-popup-content p {
+  font-size: 0.85rem; /* Ukuran font paragraf dikurangi */
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.promo-popup-actions {
+  display: flex;
+  gap: 0.5rem; /* Jarak antar tombol dikurangi */
+  margin-top: 1rem; /* Jarak dari konten ke tombol dikurangi */
+}
+
+.promo-btn {
+  padding: 0.5rem 0.8rem; /* Padding tombol dikurangi */
+  border-radius: 6px;
+  font-size: 0.8rem; /* Ukuran font tombol dikurangi */
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.promo-btn.primary {
+  background-color: var(--accent-color);
+  color: white;
+}
+.promo-btn.primary:hover {
+  background-color: var(--accent-color-hover);
+  transform: translateY(-1px);
+}
+
+.promo-btn.secondary {
+  background-color: #f3f4f6;
+  color: #374151;
+  border-color: #d1d5db;
+}
+.promo-btn.secondary:hover {
+  background-color: #e5e7eb;
+}
+
+@media (max-width: 768px) {
+  .promo-popup-container {
+    bottom: calc(2rem + 60px + 1rem); /* Posisikan di atas FAB */
+    right: 1.5rem;
+    left: 1.5rem;
+    width: auto;
+  }
 }

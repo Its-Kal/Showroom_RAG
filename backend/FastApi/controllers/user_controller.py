@@ -1,41 +1,72 @@
 from fastapi import HTTPException, status
-from sqlmodel import Session
-from repositories import user_repository
-from models.user_model import UserLogin
+from sqlalchemy.orm import Session
+import re
 
-# In a real-world application, you would use a proper password hashing library
-# like passlib. For this example, we'll assume plain text for simplicity,
-# but this is NOT secure.
-# from passlib.context import CryptContext
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from models.user_model import User
+from schemas import UserCreate
+import repositories.user_repository as user_repo
+from controllers.utils import hash_password, verify_password
 
-def login_user(session: Session, user_in: UserLogin):
-    """
-    Controller logic to handle user login.
-    1. Fetches the user by username.
-    2. Verifies the password.
-    3. Returns the user object on success or raises an error.
-    """
-    # Get the user from the database via the repository
-    db_user = user_repository.get_user_by_username(session=session, username=user_in.username)
+# Simple regex for email validation
+EMAIL_REGEX = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
-    # Business logic: Check if user exists and if the password is correct
-    if not db_user:
+def register_new_user(user_create: UserCreate, session: Session) -> User:
+    """Business logic to register a new user with validation."""
+    email = user_create.email.lower().strip()
+    username = user_create.username.strip()
+
+    if not re.match(EMAIL_REGEX, email):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Incorrect username or password"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid email address format.",
         )
 
-    # IMPORTANT: This is an insecure plain text password comparison.
-    # In a real app, you MUST use a hashing function like:
-    # if not pwd_context.verify(user_in.password, db_user.hashed_password):
-    if user_in.password != db_user.password: # Assuming plain text password for now
+    if len(user_create.password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters long.",
+        )
+
+    # Check if email or username already exists
+    if user_repo.get_user_by_email(session, email=email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered",
+        )
+    if user_repo.get_user_by_username(session, username=username):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already taken",
+        )
+
+    hashed_pwd = hash_password(user_create.password)
+
+    db_user = User(
+        username=username,
+        email=email,
+        hashed_password=hashed_pwd,
+        role=user_create.role
+    )
+
+    return user_repo.add_user_to_db(session=session, db_user=db_user)
+
+def authenticate_and_get_user(session: Session, username: str, password: str) -> User:
+    """Business logic to authenticate a user using email."""
+    # The 'username' parameter from the form is treated as the email
+    clean_email = username.lower().strip()
+    db_user = user_repo.get_user_by_email(session, email=clean_email)
+
+    if not db_user or not verify_password(plain_password=password, hashed_password=db_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    if not db_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Inactive user"
+        )
 
-    # In a real app, you would generate and return a JWT token here.
-    # For now, we return a simple success message with user details.
-    return {"message": f"Welcome {db_user.full_name}! Login successful."}
+    return db_user

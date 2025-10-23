@@ -1,19 +1,18 @@
-from typing import Optional
-from sqlmodel import Field, SQLModel
+import enum
+from sqlalchemy import Boolean, Column, Integer, String, Enum
+from database import Base
 
-# Database Model (SQLModel)
-class User(SQLModel, table=True):
+class UserRole(str, enum.Enum):
+    ADMIN_UTAMA = "admin_utama"
+    SALES = "sales"
+    ADMIN = "admin"
+
+class User(Base):
     __tablename__ = "users"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    username: str = Field(index=True, unique=True)
-    password: str
 
-# API Model for creating a user
-class UserCreate(SQLModel):
-    username: str
-    password: str
-
-# API Model for reading user data (without password)
-class UserRead(SQLModel):
-    id: int
-    username: str
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column("password", String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    role = Column(Enum(UserRole, values_callable=lambda obj: [e.value for e in obj]), nullable=False, default=UserRole.SALES)
+    is_active = Column(Boolean, default=True, nullable=False)

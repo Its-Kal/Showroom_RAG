@@ -5,10 +5,8 @@ const Footer: React.FC = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="company-info">
-          <div className="logo">
-            <span>Premium Auto</span>
-            <br />
-            <small>SHOWROOM</small>
+          <div className="logo-footer">
+            <img src="/asset/logo-putih.png" alt="Logo Perusahaan Hitam" />
           </div>
           <p>
             Showroom mobil premium terpercaya dengan koleksi kendaraan mewah dari brand-brand terkemuka dunia.<br />
@@ -29,7 +27,7 @@ const Footer: React.FC = () => {
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
-              <span>info@premiumauto.com</span>
+              <span>info@garasix.com</span>
             </div>
             <div className="contact-item">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -68,7 +66,7 @@ const Footer: React.FC = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>© 2024 Premium Auto Showroom. All rights reserved.</p>
+        <p>© 2025 Garasix Showroom. All rights reserved.</p>
       </div>
       
     </footer>

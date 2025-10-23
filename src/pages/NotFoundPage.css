@@ -31,14 +31,17 @@
 .btn-home {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    background-color: var(--primary-color, #007bff);
+    background: linear-gradient(135deg, #4a698c, #3B597B); /* Gradien default */
     color: white;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 6px;
     font-weight: 500;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(59, 89, 123, 0.15);
 }
 
 .btn-home:hover {
-    background-color: var(--primary-hover, #0056b3);
+    background: linear-gradient(135deg, #3B597B, #1e293b); /* Gradien hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 89, 123, 0.25);
 }

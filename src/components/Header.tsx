@@ -63,10 +63,15 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
     <header className={`header ${(isScrolled || isAdminPage) ? 'scrolled' : ''}`}>
       <div className="nav-container">
         <div className="logo">
-          <Link to="/" onClick={closeMenu}>
-            <span>Premium Auto</span>
-            <br />
-            <small>SHOWROOM</small>
+          <Link to="/" onClick={closeMenu} className="logo-link">
+                <img 
+        src={location.pathname !== '/' || isScrolled 
+            ? "/asset/logo-hitam.png" // Path untuk logoHitam
+            : "/asset/logo-putih.png" // Path untuk logoPutih
+        } 
+        alt="Garasix Showroom Logo" 
+        className="logo-image" 
+    />
           </Link>
         </div>
 

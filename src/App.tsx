@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
 import { LoadingProvider, useLoading } from './contexts/LoadingContext';
 import LoadingScreen from './LoadingScreen';
-import ScrollToTop from './components/ScrollToTop'; // 1. Impor komponen ScrollToTop
 
 // Import pages directly
 import HomePage from './pages/HomePage';
 import CarDetailPage from './pages/CarDetailPage';
 import AboutPage from './pages/AboutPage';
-import ChatBot from './pages/ChatBot';
 import NotFoundPage from './pages/NotFoundPage';
 import CarListPage from './pages/CarListPage';
 import LoginPage from './pages/LoginPage';
@@ -19,6 +17,7 @@ import AdminDashboard from './pages/AdminDashboard';
 
 const AppContent = () => {
   const { isLoading } = useLoading();
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -38,32 +37,42 @@ const AppContent = () => {
     setIsLoggedIn(false);
   };
 
+  // Sembunyikan Header dan Footer di halaman login dan admin
+  const showHeaderFooter = !['/login', '/admin'].includes(location.pathname);
+
   return (
-    <Router>
-      <ScrollToTop /> {/* 2. Pasang komponen di sini */}
+    <>
       {isLoading && <LoadingScreen />}
-      <div className="App">
-        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/Chat" element={<ChatBot />} />
-          <Route path="/admin" element={isLoggedIn ? <AdminDashboard /> : <LoginPage onLogin={handleLogin} />} />
-          <Route path="*" element={<NotFoundPage/>} />
-          <Route path="/koleksi" element={<CarListPage/>} />
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-          <Route path="/koleksi/:carId" element={<CarDetailPage />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+      <Routes>
+        {/* Rute tanpa Header/Footer */}
+        <Route path="/admin" element={isLoggedIn ? <AdminDashboard onLogout={handleLogout} /> : <LoginPage onLogin={handleLogin} />} />
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+
+        {/* Rute untuk halaman publik dengan layout Header/Footer */}
+        <Route path="/*" element={
+          <div className="App">
+            <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/koleksi" element={<CarListPage/>} />
+              <Route path="/koleksi/:carId" element={<CarDetailPage />} />
+              <Route path="*" element={<NotFoundPage/>} />
+            </Routes>
+            <Footer />
+          </div>
+        } />
+      </Routes>
+    </>
   );
 }
 
 function App() {
   return (
     <LoadingProvider>
-      <AppContent />
+      <Router>
+        <AppContent />
+      </Router>
     </LoadingProvider>
   );
 }

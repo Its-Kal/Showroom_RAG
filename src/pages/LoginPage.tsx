@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css'; // Import the new CSS file
+import './LoginPage.css';
 
 // SVG Icon for showing/hiding password
 const EyeIcon = ({ ...props }) => (
@@ -17,11 +17,12 @@ const EyeSlashIcon = ({ ...props }) => (
 );
 
 const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
-    const [username, setUsername] = useState('user1'); // Pre-filled for demo
-    const [password, setPassword] = useState('password123'); // Pre-filled for demo
+    const [username, setUsername] = useState(''); // Pre-filled for demo
+    const [password, setPassword] = useState(''); // Pre-filled for demo
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [isError, setIsError] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -46,57 +47,50 @@ const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             if (response.ok) {
                 setMessage(data.message);
                 setIsSuccess(true);
-                onLogin(); // Call the onLogin prop
+                onLogin();
                 navigate('/admin'); // Redirect to admin page
             } else {
                 setMessage(data.detail || 'Login failed!');
+                setIsError(true);
                 setIsSuccess(false);
             }
         } catch (error) {
-            setMessage('An error occurred. Is the backend server running?');
+            setMessage('Backend Belum Jalan');
+            setIsError(true);
             setIsSuccess(false);
             console.error('Login error:', error);
         }
     };
 
     return (
-        <div className="login-page">
-            <div className="login-branding">
-                <div className="branding-content">
+        <div className="login-container">
+            {/* Kolom Kiri: Informasi & Branding */}
+            <div className="login-info-panel">
+                <div className="login-info-content">
+                    <img src="/asset/logo-putih.png" alt="Logo Garasix Showroom" className="logo-login-img" />
                     <h1>Selamat Datang Kembali</h1>
-                    <p>Temukan mobil impian Anda bersama kami. Login untuk melanjutkan.</p>
+                    <p>Kelola inventaris mobil Anda dengan mudah melalui dasbor admin kami yang intuitif dan powerful.</p>
                 </div>
             </div>
 
-            <div className="login-container">
+            {/* Kolom Kanan: Form Login */}
+            <div className="login-form-panel">
                 <div className="login-form-wrapper">
-                    <h2>Login Akun</h2>
-                    <p className="subtitle">Silakan masukkan kredensial Anda untuk mengakses dasbor.</p>
+                    <div className="login-header">
+                        <h2>Admin Login</h2>
+                        <p className="subtitle">Silakan masukkan kredensial Anda.</p>
+                    </div>
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="username">Username</label>
-                            <input
-                                type="text"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                                placeholder="contoh: user1"
-                            />
+                            <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required placeholder="contoh: user1" />
                         </div>
 
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
                             <div className="password-wrapper">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    id="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    placeholder="••••••••"
-                                />
+                                <input type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" />
                                 <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                                     {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                                 </button>
@@ -107,9 +101,7 @@ const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
                     </form>
 
                     {message && (
-                        <p className={`login-message ${isSuccess ? 'success' : 'error'}`}>
-                            {message}
-                        </p>
+                        <p className={`login-message ${isSuccess ? 'success' : 'error'}`}>{message}</p>
                     )}
                 </div>
             </div>

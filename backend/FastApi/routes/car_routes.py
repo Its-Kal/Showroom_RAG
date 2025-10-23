@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List
-from sqlmodel import Session
+from fastapi import APIRouter, Depends, UploadFile, File, Form
+from typing import List, Optional
+from sqlalchemy.orm import Session
 
-from database.config import SessionDep
-from models.car_model import CarRead, CarCreate, CarUpdate
-import repositories.car_repository as car_repo
+from database import get_db
+from schemas import CarRead
+import controllers.car_controller as car_controller
+from auth import role_checker
+from models.user_model import UserRole
 
 router = APIRouter(
     prefix="/cars",
@@ -12,37 +14,67 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=List[CarRead])
-def get_cars(session: SessionDep):
-    """Retrieve all cars."""
-    return car_repo.get_all_cars(session=session)
+def get_cars(db: Session = Depends(get_db)):
+    """Endpoint to retrieve all cars."""
+    return car_controller.get_all_cars(db=db)
 
 @router.get("/{car_id}", response_model=CarRead)
-def get_car(car_id: int, session: SessionDep):
-    """Retrieve a single car by its ID."""
-    car = car_repo.find_car_by_id(session=session, car_id=car_id)
-    if not car:
-        raise HTTPException(status_code=404, detail="Car not found")
-    return car
+def get_car(car_id: int, db: Session = Depends(get_db)):
+    """Endpoint to retrieve a single car by its ID."""
+    return car_controller.get_car_by_id(car_id=car_id, db=db)
 
-@router.post("/", response_model=CarRead, status_code=201)
-def create_car(car: CarCreate, session: SessionDep):
-    """Create a new car."""
-    return car_repo.add_car(session=session, car_create=car)
-
-@router.put("/{car_id}", response_model=CarRead)
-def update_car(car_id: int, car_update: CarUpdate, session: SessionDep):
-    """Update an existing car."""
-    updated_car = car_repo.update_car_in_db(
-        session=session, car_id=car_id, car_update=car_update
+@router.post("/", 
+             response_model=CarRead, 
+             status_code=201,
+             dependencies=[Depends(role_checker([UserRole.ADMIN_UTAMA, UserRole.SALES]))])
+def create_car(
+    name: str = Form(...),
+    year: int = Form(...),
+    price: float = Form(...),
+    category: str = Form(...),
+    status: str = Form(...),
+    acceleration: str = Form(...),
+    fuel_consumption: str = Form(..., alias="fuelConsumption"),
+    description: str = Form(...),
+    images: str = Form(...),  # JSON string of a list of image URLs
+    specifications: str = Form(...),  # JSON string of a dict
+    image: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    """Endpoint to create a new car with an image upload."""
+    return car_controller.create_new_car(
+        db=db, name=name, year=year, price=price, category=category,
+        status=status, acceleration=acceleration, fuel_consumption=fuel_consumption,
+        description=description, images=images, specifications=specifications, image=image
     )
-    if not updated_car:
-        raise HTTPException(status_code=404, detail="Car not found")
-    return updated_car
 
-@router.delete("/{car_id}")
-def delete_car(car_id: int, session: SessionDep):
-    """Delete a car."""
-    success = car_repo.delete_car_from_db(session=session, car_id=car_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Car not found")
-    return {"message": "Car deleted successfully"}
+@router.put("/{car_id}", 
+            response_model=CarRead,
+            dependencies=[Depends(role_checker([UserRole.ADMIN_UTAMA, UserRole.SALES]))])
+def update_car(
+    car_id: int,
+    name: str = Form(...),
+    year: int = Form(...),
+    price: float = Form(...),
+    category: str = Form(...),
+    status: str = Form(...),
+    acceleration: str = Form(...),
+    fuel_consumption: str = Form(..., alias="fuelConsumption"),
+    description: str = Form(...),
+    images: str = Form(...),  # JSON string
+    specifications: str = Form(...),  # JSON string
+    image: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+):
+    """Endpoint to update an existing car."""
+    return car_controller.update_existing_car(
+        db=db, car_id=car_id, name=name, year=year, price=price,
+        category=category, status=status, acceleration=acceleration,
+        fuel_consumption=fuel_consumption, description=description, images=images,
+        specifications=specifications, image=image
+    )
+
+@router.delete("/{car_id}", dependencies=[Depends(role_checker([UserRole.ADMIN_UTAMA]))])
+def delete_car(car_id: int, db: Session = Depends(get_db)):
+    """Endpoint to delete a car."""
+    return car_controller.delete_car_by_id(car_id=car_id, db=db)
