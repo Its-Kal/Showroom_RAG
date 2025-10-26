@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Form, Input, Button, Space, message, Modal } from 'antd';
 import './LoginPage.css';
@@ -8,18 +8,14 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
     const { loginMock } = useAuth(); // V3 REFACTOR: Get login function from context
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
 
     const showErrorModal = () => {
-        setTimeout(() => {
-            Modal.error({
-                title: 'Login Gagal',
-                content: 'Nama Pengguna atau Kata Sandi salah.',
-                okText: 'OK',
-                centered: true,
-                maskClosable: true,
-                zIndex: 9999,
-            });
-        }, 100);
+        setIsErrorModalVisible(true);
+    };
+
+    const handleErrorModalOk = () => {
+        setIsErrorModalVisible(false);
     };
 
     const onFinish = async (values: any) => {
@@ -53,6 +49,18 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
     };
 
     return (
+        <>
+        <Modal
+            title="Login Gagal"
+            open={isErrorModalVisible}
+            onOk={handleErrorModalOk}
+            onCancel={handleErrorModalOk}
+            centered
+            okText="OK"
+            cancelButtonProps={{ style: { display: 'none' } }}
+        >
+            <p>Nama Pengguna atau Kata Sandi salah.</p>
+        </Modal>
         <div className="login-container">
             {/* Kolom Kiri: Informasi & Branding */}
             <div className="login-info-panel">
@@ -104,6 +112,7 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
