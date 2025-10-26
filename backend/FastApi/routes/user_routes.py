@@ -28,11 +28,11 @@ def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depen
     user = user_controller.authenticate_and_get_user(
         session=db, username=form_data.username, password=form_data.password
     )
-    
+
     access_token_data = {
         "sub": user.email,
-        "role": user.role.name
+        "role": user.role.name if user.role else None
     }
     access_token = create_access_token(data=access_token_data)
-    
+
     return {"access_token": access_token, "token_type": "bearer"}
