@@ -23,19 +23,20 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 body: formData,
             });
 
-            const data = await response.json();
-
             if (response.ok) {
+                const data = await response.json();
                 message.success(data.message);
                 loginMock(); // V3 REFACTOR: Call context login function
                 navigate('/admin'); // Redirect to admin page
             } else {
+                // Login failed - show modal error
                 Modal.error({
                     title: 'Login Gagal',
                     content: 'Nama Pengguna atau Kata Sandi salah.',
                 });
             }
         } catch (error) {
+            // Network error or other exception - show modal error
             Modal.error({
                 title: 'Login Gagal',
                 content: 'Nama Pengguna atau Kata Sandi salah.',
