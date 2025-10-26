@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime
 
-from schemas import CarCreate, CarUpdate
+from schemas_definition import CarCreate, CarUpdate
 from models.car_model import Car
 import repositories.car_repository as car_repo
 from controllers.utils import save_upload_file, UPLOAD_DIR

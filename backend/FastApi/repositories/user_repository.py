@@ -1,6 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from models.user_model import User
+from models.rbac_model import Role # Import Role model
+
+def get_role_by_id(session: Session, role_id: int) -> Role | None:
+    """Fetches a role by its ID."""
+    statement = select(Role).where(Role.id == role_id)
+    return session.execute(statement).scalars().first()
 
 def get_user_by_email(session: Session, email: str) -> User | None:
     """Fetches a user by their email."""

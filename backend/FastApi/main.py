@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import database setup
-from database import create_db_and_tables
+from db import create_db_and_tables
 
 # Import routers
-from routes import car_routes, user_routes
+from routes import car_routes, user_routes, dashboard_routes
 
 # Import models to ensure they are registered with Base
 from models import car_model, user_model
@@ -34,7 +34,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-] 
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,3 +52,4 @@ def read_root():
 # --- Include Routers ---
 app.include_router(car_routes.router)
 app.include_router(user_routes.router)
+app.include_router(dashboard_routes.router, prefix="/api/v1", tags=["Dashboard"])

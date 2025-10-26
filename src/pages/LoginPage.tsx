@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
+import { useAuth } from '../contexts/AuthContext'; // V3 IMPORT
 
 // SVG Icon for showing/hiding password
 const EyeIcon = ({ ...props }) => (
@@ -16,7 +17,8 @@ const EyeSlashIcon = ({ ...props }) => (
     </svg>
 );
 
-const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
+    const { loginMock } = useAuth(); // V3 REFACTOR: Get login function from context
     const [username, setUsername] = useState(''); // Pre-filled for demo
     const [password, setPassword] = useState(''); // Pre-filled for demo
     const [message, setMessage] = useState('');
@@ -47,7 +49,7 @@ const LoginPage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             if (response.ok) {
                 setMessage(data.message);
                 setIsSuccess(true);
-                onLogin();
+                loginMock(); // V3 REFACTOR: Call context login function
                 navigate('/admin'); // Redirect to admin page
             } else {
                 setMessage(data.detail || 'Login failed!');

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import '../App.css';
+import { useAuth } from '../contexts/AuthContext'; // IMPORT useAuth
 
-interface HeaderProps {
-  isLoggedIn: boolean;
-  onLogout: () => void;
-}
+// REMOVE HeaderProps interface
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
+const Header: React.FC = () => { // REMOVE props
+  const { user, logoutMock } = useAuth(); // USE useAuth hook
+  const isLoggedIn = !!user; // DERIVE isLoggedIn from user
+  const onLogout = logoutMock; // USE logoutMock for onLogout
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
@@ -23,8 +25,6 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Header akan berubah setelah scroll melewati tinggi viewport (tinggi hero section)
-      // Diberi sedikit toleransi (misal: 100px) agar transisi tidak terlalu mendadak
       setIsScrolled(window.scrollY > window.innerHeight - 100);
     };
     window.addEventListener('scroll', handleScroll);
@@ -83,7 +83,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
             <li><NavLink to="/" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Beranda</NavLink></li>
             <li><NavLink to="/koleksi" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Koleksi</NavLink></li>
             <li><NavLink to="/about" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Tentang Kami</NavLink></li>
-            {isLoggedIn && <li><NavLink to="/admin" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink></li>}
+            {/* UPDATE Admin link to /admin/dashboard */}
+            {isLoggedIn && <li><NavLink to="/admin/dashboard" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink></li>}
           </ul>
           {renderMobileLoginButton()}
         </nav>

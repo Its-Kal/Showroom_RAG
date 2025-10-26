@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from typing import List
 from models.car_model import Car
-from schemas import CarCreate, CarUpdate
+from schemas_definition import CarCreate, CarUpdate
 
 def get_all_cars(session: Session) -> List[Car]:
     return session.execute(select(Car)).scalars().all()

@@ -1,9 +1,18 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
-from models.user_model import UserRole
+
+# --- Role Schemas ---
+class RoleBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class RoleRead(RoleBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 # --- User Schemas ---
-
 class UserBase(BaseModel):
     email: str
     username: str
@@ -11,21 +20,20 @@ class UserBase(BaseModel):
 class UserRead(UserBase):
     id: int
     is_active: bool
-    role: UserRole
+    role: Optional[RoleRead] = None # Use the new RoleRead schema
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserCreate(UserBase):
     password: str
-    role: UserRole
+    role_id: int # Accept role_id instead of a complex object
 
 class TokenData(BaseModel):
     email: str | None = None
     role: str | None = None
 
 # --- Car Schemas ---
-
 class CarBase(BaseModel):
     name: str
     year: int
@@ -43,7 +51,7 @@ class CarRead(CarBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CarCreate(CarBase):
     pass
