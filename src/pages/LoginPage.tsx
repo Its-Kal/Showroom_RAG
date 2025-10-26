@@ -1,14 +1,22 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, Space, message, App as AntApp } from 'antd';
+import { Form, Input, Button, Space, message, Modal } from 'antd';
 import './LoginPage.css';
 import { useAuth } from '../contexts/AuthContext'; // V3 IMPORT
 
 const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
     const { loginMock } = useAuth(); // V3 REFACTOR: Get login function from context
-    const { modal } = AntApp.useApp();
     const [form] = Form.useForm();
     const navigate = useNavigate();
+
+    const showErrorModal = () => {
+        Modal.error({
+            title: 'Login Gagal',
+            content: 'Nama Pengguna atau Kata Sandi salah.',
+            okText: 'OK',
+            centered: true,
+        });
+    };
 
     const onFinish = async (values: any) => {
         try {
@@ -31,23 +39,16 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 navigate('/admin'); // Redirect to admin page
             } else {
                 // Login failed - show modal error
-                modal.error({
-                    title: 'Login Gagal',
-                    content: 'Nama Pengguna atau Kata Sandi salah.',
-                });
+                showErrorModal();
             }
         } catch (error) {
             // Network error or other exception - show modal error
-            modal.error({
-                title: 'Login Gagal',
-                content: 'Nama Pengguna atau Kata Sandi salah.',
-            });
+            showErrorModal();
             console.error('Login error:', error);
         }
     };
 
     return (
-        <AntApp>
         <div className="login-container">
             {/* Kolom Kiri: Informasi & Branding */}
             <div className="login-info-panel">
@@ -99,7 +100,6 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 </div>
             </div>
         </div>
-        </AntApp>
     );
 };
 
