@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, Space, message } from 'antd';
+import { Form, Input, Button, Space, message, Modal } from 'antd';
 import './LoginPage.css';
 import { useAuth } from '../contexts/AuthContext'; // V3 IMPORT
 
@@ -30,10 +30,16 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 loginMock(); // V3 REFACTOR: Call context login function
                 navigate('/admin'); // Redirect to admin page
             } else {
-                message.error('Nama Pengguna atau Kata Sandi salah.', 3);
+                Modal.error({
+                    title: 'Login Gagal',
+                    content: 'Nama Pengguna atau Kata Sandi salah.',
+                });
             }
         } catch (error) {
-            message.error('Nama Pengguna atau Kata Sandi salah.', 3);
+            Modal.error({
+                title: 'Login Gagal',
+                content: 'Nama Pengguna atau Kata Sandi salah.',
+            });
             console.error('Login error:', error);
         }
     };
