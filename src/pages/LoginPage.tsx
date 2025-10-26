@@ -30,10 +30,10 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 loginMock(); // V3 REFACTOR: Call context login function
                 navigate('/admin'); // Redirect to admin page
             } else {
-                message.error('Email atau kata sandi salah.', 3);
+                message.error('Nama Pengguna atau Kata Sandi salah.', 3);
             }
         } catch (error) {
-            message.error('Email atau kata sandi salah.', 3);
+            message.error('Nama Pengguna atau Kata Sandi salah.', 3);
             console.error('Login error:', error);
         }
     };
@@ -76,11 +76,11 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
 
                         <Form.Item>
                             <Space>
-                                <Button type="primary" htmlType="submit">
+                                <Button type="primary" htmlType="submit" size="large">
                                     Masuk
                                 </Button>
                                 <Link to="/">
-                                    <Button type="default">
+                                    <Button type="default" size="large">
                                         Beranda
                                     </Button>
                                 </Link>
