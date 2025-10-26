@@ -10,12 +10,16 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
     const navigate = useNavigate();
 
     const showErrorModal = () => {
-        Modal.error({
-            title: 'Login Gagal',
-            content: 'Nama Pengguna atau Kata Sandi salah.',
-            okText: 'OK',
-            centered: true,
-        });
+        setTimeout(() => {
+            Modal.error({
+                title: 'Login Gagal',
+                content: 'Nama Pengguna atau Kata Sandi salah.',
+                okText: 'OK',
+                centered: true,
+                maskClosable: true,
+                zIndex: 9999,
+            });
+        }, 100);
     };
 
     const onFinish = async (values: any) => {
