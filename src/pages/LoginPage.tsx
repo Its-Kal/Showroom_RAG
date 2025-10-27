@@ -57,10 +57,8 @@ const LoginPage: React.FC = () => {
                 setMessage('Login successful! Redirecting...');
                 setIsSuccess(true);
                 setTimeout(() => {
-                    if (userRole === 'admin') {
+                    if (userRole === 'admin' || userRole === 'sales') {
                         navigate('/admin/dashboard');
-                    } else if (userRole === 'sales') {
-                        navigate('/sales/dashboard');
                     } else {
                         navigate('/');
                     }
