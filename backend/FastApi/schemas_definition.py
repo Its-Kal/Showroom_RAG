@@ -41,7 +41,7 @@ class CarBase(BaseModel):
     category: str
     status: str
     acceleration: str
-    fuel_consumption: str = Field(alias="fuelConsumption")
+    fuel_consumption: Optional[str] = None 
     description: str
     image: str
     images: List[str]

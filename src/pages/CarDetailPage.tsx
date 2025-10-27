@@ -12,6 +12,11 @@ const CarDetailPage = () => {
     const { showLoading, hideLoading } = useLoading();
 
     useEffect(() => {
+        // Scroll ke atas saat halaman dimuat
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
+    useEffect(() => {
         if (!carId) return;
 
         const fetchCarData = async () => {
@@ -38,7 +43,7 @@ const CarDetailPage = () => {
     }
 
     return (
-        <div>
+        <div style={{ paddingTop: '5rem', minHeight: '100vh' }}>
             {car && <CarDetail car={car} />}
         </div>
     );

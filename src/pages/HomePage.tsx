@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
 
   const handleStartConsultation = () => {
     setIsPromoOpen(false); // Tutup promo
-    setIsChatOpen(true);   // Buka chat
+    setIsChatOpen(true); // Buka chat
   };
 
   return (
@@ -46,15 +46,13 @@ const HomePage: React.FC = () => {
       <FadeInSection>
         <TestimonialSection />
       </FadeInSection>
-      {isPromoOpen && <AIPromoPopup onClose={() => setIsPromoOpen(false)} onStartConsultation={handleStartConsultation} />}
-
-      {/* Floating Action Button untuk Chat */}
-      <button className="chat-fab" onClick={() => setIsChatOpen(true)} aria-label="Open AI Consultant">
-        <ChatIcon />
-      </button>
-
-      {/* Komponen ChatBot sebagai Popup */}
-      <ChatBot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      <div className="floating-action-container">
+        {isPromoOpen && <AIPromoPopup onClose={() => setIsPromoOpen(false)} onStartConsultation={handleStartConsultation} />}
+        <button className="chat-fab modern-fab" onClick={() => { setIsChatOpen(true); setIsPromoOpen(false); }} aria-label="Open AI Consultant">
+          <ChatIcon />
+        </button>
+        {isChatOpen && <ChatBot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />}
+      </div>
     </main>
   );
 };

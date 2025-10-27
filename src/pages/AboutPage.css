@@ -7,26 +7,22 @@
 /* Hero Section */
 /* Tidak ada perubahan di sini, hero section sudah terlihat bagus */
 .about-hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80') no-repeat center center/cover;
-    color: white;
-    padding: 6rem 2rem;
+    background-color: transparent; /* Menghapus gambar latar */
+    color: #111827; /* Mengubah warna teks menjadi gelap */
+    padding: 4rem 2rem; /* Mengurangi padding agar lebih ringkas */
     text-align: center;
-    min-height: 40vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .about-hero-content h1 {
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .about-hero-content p {
     font-size: 1.25rem;
-    font-weight: 300;
+    font-weight: 400; /* Membuat teks sedikit lebih tebal agar mudah dibaca */
+    color: #4a4a4a;
     max-width: 600px;
     margin: 0 auto;
 }
@@ -200,18 +196,18 @@
     font-size: 1.1rem;
     font-weight: 600;
     color: white;
-    background: linear-gradient(135deg, #4a698c, #3B597B); /* Gradien yang sama dengan tombol login */
+    background: var(--button-bg); /* Menggunakan gradien utama */
     border: none;
     border-radius: 8px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(59, 89, 123, 0.2);
+    box-shadow: 0 4px 12px rgba(51, 65, 85, 0.3);
 }
 
 .btn-cta:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #3B597B, #1e293b);
-    box-shadow: 0 7px 20px rgba(59, 89, 123, 0.3);
+    background: linear-gradient(to right, #324c69, #17202e); /* Versi lebih gelap dari gradien */
+    box-shadow: 0 7px 18px rgba(51, 65, 85, 0.35);
 }
 
 /* Responsive adjustments */
