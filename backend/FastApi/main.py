@@ -3,11 +3,11 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from sqlmodel import Session, SQLModel, Field, create_engine, select
+from sqlmodel import Session, SQLModel, Field, create_engine, select, Relationship
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 # --- START: ALL LOGIC IN ONE FILE ---
 
@@ -20,12 +20,37 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "default_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# 3. Database Models
+# 3. Database Models (Now with full relationships)
+
+# Link table for the many-to-many relationship
+class RolePermission(SQLModel, table=True):
+    __tablename__ = "role_permissions"
+    role_id: int = Field(foreign_key="roles.id", primary_key=True)
+    permission_id: int = Field(foreign_key="permissions.id", primary_key=True)
+
+class Permission(SQLModel, table=True):
+    __tablename__ = "permissions"
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(unique=True)
+    description: str | None = None
+    roles: List["Role"] = Relationship(back_populates="permissions", link_model=RolePermission)
+
+class Role(SQLModel, table=True):
+    __tablename__ = "roles"
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(unique=True)
+    users: List["User"] = Relationship(back_populates="role")
+    permissions: List[Permission] = Relationship(back_populates="roles", link_model=RolePermission)
+
 class User(SQLModel, table=True):
     __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True)
     password: str
+    email: str = Field(unique=True)
+    is_active: bool = Field(default=True)
+    role_id: int | None = Field(default=None, foreign_key="roles.id")
+    role: Optional[Role] = Relationship(back_populates="users")
 
 class Car(SQLModel, table=True):
     __tablename__ = "cars"
@@ -38,7 +63,7 @@ class Car(SQLModel, table=True):
     category: str | None = None
     status: str | None = None
     acceleration: str | None = None
-    fuel_consumption: str | None = Field(default=None, alias="fuelConsumption")
+    fuel_consumption: str | None = Field(default=None)
 
 # 4. Pydantic Models for API
 class Token(SQLModel):
@@ -52,7 +77,6 @@ class CarRead(SQLModel):
     price: float
     description: str
     image: str | None = None
-    fuel_consumption: str | None = Field(default=None, alias="fuelConsumption")
 
 # 5. Security Utilities
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -89,14 +113,26 @@ app.add_middleware(
 
 @app.post("/users/login", response_model=Token)
 def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: Annotated[Session, Depends(get_session)]):
-    statement = select(User).where(User.username == form_data.username)
-    user = session.exec(statement).first()
+    # Find the user by username
+    user_statement = select(User).where(User.username == form_data.username)
+    user = session.exec(user_statement).first()
+
+    # Verify user exists and password is correct
     if not user or not verify_password(form_data.password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
-    role = "unknown"
-    if "admin" in user.username: role = "admin"
-    elif "sales" in user.username: role = "sales"
-    token_data = {"sub": user.username, "role": role}
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
+
+    # --- NEW: Fetch user's permissions --- #
+    permissions = []
+    if user.role and user.role.permissions:
+        permissions = [p.name for p in user.role.permissions]
+    
+    # Create the token payload with username, role, and the list of permissions
+    token_data = {
+        "sub": user.username,
+        "role": user.role.name if user.role else None,
+        "permissions": permissions
+    }
+    
     access_token = create_access_token(data=token_data)
     return Token(access_token=access_token, token_type="bearer")
 
@@ -105,7 +141,6 @@ def get_all_cars(session: Annotated[Session, Depends(get_session)]):
     cars = session.exec(select(Car)).all()
     return cars
 
-# ADDED: Endpoint to get a single car by ID
 @app.get("/cars/{car_id}", response_model=CarRead)
 def get_car_by_id(car_id: int, session: Annotated[Session, Depends(get_session)]):
     car = session.get(Car, car_id)
