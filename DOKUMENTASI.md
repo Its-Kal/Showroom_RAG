@@ -175,3 +175,48 @@ Komunikasi terjadi melalui **permintaan HTTP** menggunakan `fetch` API di fronte
 2.  **Isi Komponen**: Buat komponen React dasar di dalamnya.
 3.  **Daftarkan Rute**: Di `src/App.tsx`, impor komponen baru dan tambahkan `<Route path="/kontak" element={<ContactPage />} />` di dalam `<Routes>`.
 4.  **Tambah Link (Opsional)**: Di `src/components/Header.tsx`, tambahkan `<Link to="/kontak">Kontak</Link>` agar muncul di navigasi.
+
+---
+
+## Bab 8: Pembaruan Fitur - Autentikasi dan Role Pengguna
+
+Bagian ini menjelaskan fitur-fitur keamanan dan manajemen pengguna baru yang telah ditambahkan ke dalam proyek.
+
+### 1. Sistem Autentikasi Berbasis JWT (JSON Web Token)
+
+Aplikasi kini dilengkapi sistem autentikasi aman menggunakan JSON Web Token (JWT) untuk melindungi data dan halaman admin.
+
+-   **Alur Login**:
+    1.  Pengguna memasukkan kredensial di halaman Login.
+    2.  Frontend mengirim data ke endpoint backend `POST /users/login`.
+    3.  Backend memverifikasi kredensial dengan hash password di database.
+    4.  Jika berhasil, backend membuat sebuah **token JWT** yang berisi informasi pengguna (seperti `username` dan `role`) dan mengirimkannya kembali ke frontend.
+    5.  Frontend menerima token ini dan menyimpannya di `sessionStorage` browser untuk digunakan pada sesi tersebut.
+
+### 2. Manajemen Role Pengguna (RBAC - Role-Based Access Control)
+
+Struktur database telah diperbarui untuk mendukung sistem peran pengguna, memungkinkan adanya level akses yang berbeda.
+
+-   **Struktur Database**:
+    -   Tabel **`roles`**: Sebuah tabel baru yang berisi daftar semua peran yang mungkin (misalnya, `id: 1, name: 'admin_utama'`).
+    -   Tabel **`users`**: Tabel pengguna sekarang memiliki kolom `role_id` yang berfungsi sebagai *foreign key* yang merujuk ke tabel `roles`.
+-   **Tiga Peran Utama**:
+    1.  **AdminUtama**: Memiliki akses tertinggi.
+    2.  **Admin**: Memiliki akses administratif standar.
+    3.  **Sales**: Memiliki akses terbatas, hanya untuk fitur-fitur penjualan.
+-   **Script Pembuatan Pengguna (`create_user.py`)**: Sebuah script utilitas telah dibuat untuk membantu developer menambahkan pengguna baru ke database dengan password yang sudah di-hash dan `role_id` yang sesuai.
+
+### 3. Logika Frontend Berbasis Peran (Role-Aware)
+
+Frontend kini "sadar" akan peran pengguna yang sedang login dan dapat menyesuaikan tampilannya.
+
+-   **Pengalihan Dinamis**: Setelah login berhasil, `LoginPage.tsx` mendekode token JWT untuk membaca `role` pengguna. Berdasarkan `role` ini, pengguna akan diarahkan ke dasbor yang sesuai (misalnya, `/admin/dashboard` untuk admin atau `/sales/dashboard` untuk sales).
+-   **Komponen Terproteksi (`ProtectedComponent.tsx`)**: Sebuah komponen baru telah dibuat yang dapat "membungkus" bagian dari UI. Komponen ini hanya akan menampilkan isinya jika `role` pengguna yang sedang login cocok dengan `requiredRole` yang ditentukan.
+
+### 4. Konteks Global untuk Autentikasi (`AuthContext.tsx`)
+
+Manajemen status login kini terpusat dan lebih modern menggunakan React Context.
+
+-   **Fungsi**: `AuthContext` menjadi "sumber kebenaran tunggal" untuk status login di seluruh aplikasi.
+-   **Isi**: Menyediakan informasi `user` (username dan role), `token`, serta fungsi `login()` dan `logout()` yang bisa diakses oleh komponen mana pun (seperti `Header` dan `LoginPage`) tanpa perlu meneruskan *props*.
+-   **Persistensi**: `AuthContext` secara otomatis memeriksa `sessionStorage` saat aplikasi dimuat. Ini berarti jika pengguna me-refresh halaman, mereka akan tetap dalam keadaan login.

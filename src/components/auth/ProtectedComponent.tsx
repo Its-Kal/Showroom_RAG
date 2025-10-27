@@ -2,14 +2,18 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ProtectedComponentProps {
-  permission: string;
+  // We expect the required role as a string, e.g., "admin" or "sales"
+  requiredRole: string;
   children: React.ReactNode;
 }
 
-export const ProtectedComponent: React.FC<ProtectedComponentProps> = ({ permission, children }) => {
-  const { checkPermission } = useAuth();
+export const ProtectedComponent: React.FC<ProtectedComponentProps> = ({ requiredRole, children }) => {
+  // Get the whole user object from the context
+  const { user } = useAuth();
 
-  const canAccess = checkPermission(permission);
+  // Check if the logged-in user's role matches the required role
+  const canAccess = user?.role === requiredRole;
 
+  // Render the children only if the user has the correct role
   return canAccess ? <>{children}</> : null;
 };
