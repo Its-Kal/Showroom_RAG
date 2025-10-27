@@ -22,5 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Python cache
+# Python specific
 __pycache__/
+*.pyc
+venv/
+.venv/
+.idea/

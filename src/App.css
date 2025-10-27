@@ -1,7 +1,7 @@
+
+
 :root {
-    --premium-blue: #007bff;
-    --accent-color-hover: #0056b3;
-    --premium-blue-dark: #0056b3;
+    --button-bg: linear-gradient(to right, #3B597B, #1e293b);
     --cream-bg: #FFF9F3;
     --dark-bg: #0f172a;
     --light-text: #cbd5e1;
@@ -93,7 +93,11 @@ body {
     max-width: 1400px;
 }
 
-
+.logo-image {
+    height: 55px; /* Menetapkan tinggi logo di header */
+    width: auto;
+    transition: height 0.5s ease-in-out; /* Transisi halus saat ukuran berubah */
+}
 
 .logo a {
     text-decoration: none;
@@ -108,10 +112,6 @@ body {
     line-height: 1.2;
 }
 
-.logo span {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
 
 .logo small {
     font-size: 0.8rem;
@@ -638,7 +638,7 @@ body {
 
 .btn-detail {
   width: 100%;
-  background: #3B597B; /* Warna biru tua/navy */
+  background: var(--button-bg); /* Menggunakan gradien dari variabel root */
   color: #ffffff; /* Warna teks putih */
   border: none;
   padding: 0.6rem 1rem; /* Padding vertikal dikurangi */
@@ -654,7 +654,7 @@ body {
 }
 
 .btn-detail:hover {
-  background: #1e293b; /* Warna abu-abu lebih gelap saat hover (slate-800) */
+  background: linear-gradient(to right, #324c69, #17202e); /* Versi lebih gelap dari gradien */
   box-shadow: 0 4px 12px rgba(51, 65, 85, 0.3);
   transform: translateY(-2px);
 }
@@ -803,7 +803,7 @@ body {
 }
 
 .logo span {
-    font-size: 1.5rem;
+    font-size: 1.25rem; /* Ukuran font dikurangi agar lebih kecil */
     font-weight: 700;
 }
 
@@ -1368,21 +1368,20 @@ body {
 }
 
 .promo-btn.primary {
-  background-color: var(--accent-color);
-  color: white;
-}
-.promo-btn.primary:hover {
-  background-color: var(--accent-color-hover);
-  transform: translateY(-1px);
+  /* Sembunyikan tombol "Mulai Konsultasi AI" */
+  display: none;
 }
 
 .promo-btn.secondary {
-  background-color: #f3f4f6;
-  color: #374151;
-  border-color: #d1d5db;
+  /* Terapkan gaya baru ke tombol "Lihat Semua Stok" */
+  background: var(--button-bg);
+  color: white;
+  border-color: transparent;
+  flex: 1; /* Buat tombol memenuhi lebar yang tersedia */
 }
 .promo-btn.secondary:hover {
-  background-color: #e5e7eb;
+  background: linear-gradient(to right, #324c69, #17202e); /* Versi lebih gelap dari gradien */
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
@@ -1392,4 +1391,45 @@ body {
     left: 1.5rem;
     width: auto;
   }
+}
+
+/* Perbaikan untuk Floating Action Container */
+.floating-action-container {
+  position: relative; /* Jadikan sebagai konteks posisi */
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: flex-end; /* Menjajarkan item ke bawah */
+  gap: 1rem; /* Memberi jarak antara popup promo dan tombol chat */
+  z-index: 1000;
+  position: fixed; /* Pastikan tetap fixed di layar */
+}
+.floating-action-container .chat-popup-container {
+    position: absolute; /* Keluarkan dari alur flex */
+    bottom: 0; /* Sejajarkan dengan bagian bawah container */
+    right: calc(100% + 1rem); /* Posisi di sebelah kiri container (dan ikon) */
+}
+/* Gaya Modern untuk Tombol Chat FAB (Floating Action Button) */
+.modern-fab {
+  background: var(--button-bg);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.modern-fab:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.15), 0 12px 32px 10px rgba(0, 0, 0, 0.08);
+}
+
+.modern-fab:active {
+  transform: translateY(-1px);
 }

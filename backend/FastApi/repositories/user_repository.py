@@ -1,26 +1,12 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlmodel import Session, select
 from models.user_model import User
-from models.rbac_model import Role # Import Role model
-
-def get_role_by_id(session: Session, role_id: int) -> Role | None:
-    """Fetches a role by its ID."""
-    statement = select(Role).where(Role.id == role_id)
-    return session.execute(statement).scalars().first()
-
-def get_user_by_email(session: Session, email: str) -> User | None:
-    """Fetches a user by their email."""
-    statement = select(User).where(User.email == email)
-    return session.execute(statement).scalars().first()
 
 def get_user_by_username(session: Session, username: str) -> User | None:
-    """Fetches a user by their username."""
+    """
+    Retrieves a single user by their username.
+    """
+    print(f"--- REPOSITORY: Mencari pengguna dengan username: '{username}' ---")
     statement = select(User).where(User.username == username)
-    return session.execute(statement).scalars().first()
-
-def add_user_to_db(session: Session, db_user: User) -> User:
-    """Creates a new user in the database."""
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
-    return db_user
+    user = session.exec(statement).first()
+    print(f"--- REPOSITORY: Hasil query database: {user} ---")
+    return user

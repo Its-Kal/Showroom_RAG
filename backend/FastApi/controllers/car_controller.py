@@ -12,7 +12,10 @@ from typing import List
 
 def get_all_cars(db: Session) -> List[Car]:
     """Business logic to retrieve all cars."""
-    return car_repo.get_all_cars(session=db)
+    print("Fetching all cars from database...")
+    cars = car_repo.get_all_cars(session=db)
+    print(f"Found {len(cars)} cars")
+    return cars
 
 def get_car_by_id(car_id: int, db: Session) -> Car:
     """Business logic to retrieve a single car by its ID."""

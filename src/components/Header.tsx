@@ -3,12 +3,10 @@ import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import '../App.css';
 import { useAuth } from '../contexts/AuthContext'; // IMPORT useAuth
 
-// REMOVE HeaderProps interface
-
-const Header: React.FC = () => { // REMOVE props
-  const { user, logoutMock } = useAuth(); // USE useAuth hook
-  const isLoggedIn = !!user; // DERIVE isLoggedIn from user
-  const onLogout = logoutMock; // USE logoutMock for onLogout
+const Header: React.FC = () => {
+  const { user, logout } = useAuth(); // CORRECTED: Use the real 'logout' function
+  const isLoggedIn = !!user;
+  const onLogout = logout; // CORRECTED: Assign the real logout function
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -83,7 +81,6 @@ const Header: React.FC = () => { // REMOVE props
             <li><NavLink to="/" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Beranda</NavLink></li>
             <li><NavLink to="/koleksi" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Koleksi</NavLink></li>
             <li><NavLink to="/about" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Tentang Kami</NavLink></li>
-            {/* UPDATE Admin link to /admin/dashboard */}
             {isLoggedIn && <li><NavLink to="/admin/dashboard" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink></li>}
           </ul>
           {renderMobileLoginButton()}

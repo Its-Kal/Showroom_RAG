@@ -1,80 +1,42 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-import re
+from sqlmodel import Session
+from repositories import user_repository
+from models.user_model import UserLogin, Token
+from auth.security import verify_password, create_access_token
 
-from models.user_model import User
-from schemas_definition import UserCreate
-import repositories.user_repository as user_repo
-from controllers.utils import hash_password, verify_password
+def login_for_access_token(session: Session, user_in: UserLogin) -> Token:
+    """
+    Controller logic to handle user login and return a JWT access token.
+    """
+    print(f"--- CONTROLLER: Menerima permintaan login untuk username: '{user_in.username}' ---")
+    print(f"--- CONTROLLER: Password yang diterima: '{user_in.password}' ---")
 
-# Simple regex for email validation
-EMAIL_REGEX = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    db_user = user_repository.get_user_by_username(session=session, username=user_in.username)
 
-def register_new_user(user_create: UserCreate, session: Session) -> User:
-    """Business logic to register a new user with validation."""
-    email = user_create.email.lower().strip()
-    username = user_create.username.strip()
-
-    if not re.match(EMAIL_REGEX, email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid email address format.",
-        )
-
-    if len(user_create.password) < 8:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must be at least 8 characters long.",
-        )
-
-    # Check if email or username already exists
-    if user_repo.get_user_by_email(session, email=email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered",
-        )
-    if user_repo.get_user_by_username(session, username=username):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already taken",
-        )
-
-    # Fetch the role from the database
-    role = user_repo.get_role_by_id(session, role_id=user_create.role_id)
-    if not role:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Role with id {user_create.role_id} not found",
-        )
-
-    hashed_pwd = hash_password(user_create.password)
-
-    db_user = User(
-        username=username,
-        email=email,
-        hashed_password=hashed_pwd,
-        role=role # Assign the fetched Role object
-    )
-
-    return user_repo.add_user_to_db(session=session, db_user=db_user)
-
-def authenticate_and_get_user(session: Session, username: str, password: str) -> User:
-    """Business logic to authenticate a user using email."""
-    # The 'username' parameter from the form is treated as the email
-    clean_email = username.lower().strip()
-    db_user = user_repo.get_user_by_email(session, email=clean_email)
-
-    if not db_user or not verify_password(plain_password=password, hashed_password=db_user.hashed_password):
+    if not db_user:
+        print("--- CONTROLLER: Verifikasi GAGAL. Pengguna tidak ditemukan di database. ---")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    if not db_user.is_active:
+
+    # Check password
+    is_password_correct = verify_password(user_in.password, db_user.password) # Assuming column is named 'password'
+    print(f"--- CONTROLLER: Hasil verifikasi password: {is_password_correct} ---")
+
+    if not is_password_correct:
+        print("--- CONTROLLER: Verifikasi GAGAL. Password tidak cocok. ---")
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Inactive user"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return db_user
+    # If everything is correct, create and return the token
+    print("--- CONTROLLER: Verifikasi BERHASIL. Membuat token... ---")
+    access_token = create_access_token(
+        data={"sub": db_user.username}
+    )
+
+    return Token(access_token=access_token, token_type="bearer")

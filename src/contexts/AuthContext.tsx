@@ -1,68 +1,112 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
-// 1. Interface Definitions
-interface IUser {
-  email: string;
-  // Add other user properties as needed
+// --- TYPE DEFINITIONS ---
+
+// Type for the decoded JWT payload, now including permissions
+interface DecodedToken {
+  sub: string; 
+  role: string;
+  permissions: string[]; // Added permissions array
+  exp: number;
 }
 
+// Type for the user object stored in state
+interface IUser {
+  username: string;
+  role: string;
+  permissions: Set<string>; // Use a Set for efficient permission checks (O(1) lookup)
+}
+
+// Type for the overall auth state
 interface IAuthState {
   user: IUser | null;
-  permissions: Set<string>;
+  token: string | null;
   isLoading: boolean;
 }
 
+// Type for the context value, now with a more specific checkPermission function
 interface IAuthContext extends IAuthState {
+  login: (token: string) => void;
+  logout: () => void;
   checkPermission: (permission: string) => boolean;
-  loginMock: () => void; // Dummy login for testing
-  logoutMock: () => void; // Dummy logout for testing
 }
 
-// 2. AuthContext Creation
+// --- CONTEXT CREATION ---
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
-// 3. AuthProvider Component
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+// --- AUTH PROVIDER COMPONENT ---
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, setState] = useState<IAuthState>({
     user: null,
-    permissions: new Set(),
-    isLoading: true, // Assume loading until a check is made
+    token: null,
+    isLoading: true,
   });
 
-  // Dummy login function for development and testing
-  const loginMock = () => {
-    const mockUser: IUser = { email: 'test@example.com' };
-    const mockPermissions = new Set(["CAN_VIEW_CARS", "CAN_VIEW_SALES_CHART"]);
-    setState({ user: mockUser, permissions: mockPermissions, isLoading: false });
+  useEffect(() => {
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (token) {
+        const decoded = jwtDecode<DecodedToken>(token);
+        if (decoded.exp * 1000 > Date.now()) {
+          setState({
+            user: { 
+              username: decoded.sub, 
+              role: decoded.role, 
+              permissions: new Set(decoded.permissions) // Store permissions in a Set
+            },
+            token: token,
+            isLoading: false,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to decode token on initial load", error);
+    } finally {
+      setState(s => ({ ...s, isLoading: false }));
+    }
+  }, []);
+
+  const login = (token: string) => {
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      sessionStorage.setItem('accessToken', token);
+      setState({
+        user: { 
+          username: decoded.sub, 
+          role: decoded.role, 
+          permissions: new Set(decoded.permissions) // Store permissions in a Set
+        },
+        token: token,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error("Failed to decode token on login", error);
+    }
   };
 
-  // Dummy logout function
-  const logoutMock = () => {
-    setState({ user: null, permissions: new Set(), isLoading: false });
+  const logout = () => {
+    sessionStorage.removeItem('accessToken');
+    setState({ user: null, token: null, isLoading: false });
   };
 
+  // The new permission checking function
   const checkPermission = (permission: string): boolean => {
-    return state.permissions.has(permission);
+    if (!state.user) return false;
+    return state.user.permissions.has(permission);
   };
-
-  // In a real app, you would have a useEffect here to fetch the user
-  // e.g., from a 'GET /auth/me' endpoint upon initial load.
 
   const value: IAuthContext = {
     ...state,
+    login,
+    logout,
     checkPermission,
-    loginMock,
-    logoutMock,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// 4. Custom Hook `useAuth`
+// --- CUSTOM HOOK ---
 export const useAuth = (): IAuthContext => {
   const context = useContext(AuthContext);
   if (context === undefined) {

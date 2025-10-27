@@ -1,4 +1,5 @@
-# FILE: routes/car_routes.py (VERSI LENGKAP SETELAH DIPERBAIKI)
+
+## Konfigurasi CORS dan FastAPI sebaiknya diatur di main.py, bukan di file routes ini
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from typing import List, Optional
@@ -14,12 +15,12 @@ router = APIRouter(
     tags=["Cars"],
 )
 
-@router.get("/", response_model=List[CarRead], dependencies=[Depends(require_permission("CAN_VIEW_CARS"))])
+@router.get("/", response_model=List[CarRead])
 def get_cars(db: Session = Depends(get_db)):
     """Endpoint to retrieve all cars."""
     return car_controller.get_all_cars(db=db)
 
-@router.get("/{car_id}", response_model=CarRead, dependencies=[Depends(require_permission("CAN_VIEW_CARS"))])
+@router.get("/{car_id}", response_model=CarRead)
 def get_car(car_id: int, db: Session = Depends(get_db)):
     """Endpoint to retrieve a single car by its ID."""
     return car_controller.get_car_by_id(car_id=car_id, db=db)

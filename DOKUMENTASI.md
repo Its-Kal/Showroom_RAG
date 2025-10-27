@@ -88,45 +88,49 @@ Folder ini berisi blok bangunan UI yang lebih kecil dan dapat digunakan kembali.
 - **`FeaturedCars.tsx` & `CollectionSection.tsx`**: Menampilkan galeri mobil. Mengambil data dari backend API.
 - **`CarCard.tsx`**: Komponen kartu untuk menampilkan ringkasan satu mobil. Digunakan di banyak halaman.
 - **`CarDetail.tsx`**: Menampilkan semua detail dari satu mobil, termasuk gambar dan spesifikasi.
-- **`TestimonialSection.tsx` & `TestimonialCard.tsx`**: Menampilkan bagian testimoni pelanggan.
+- **`TestimonialSection.tsx`**: Menampilkan bagian testimoni pelanggan.
+- **`ScrollToTop.tsx`**: Komponen fungsional yang sangat penting untuk pengalaman pengguna.
+  - **Masalah yang Dipecahkan**: Pada aplikasi satu halaman (Single Page Application), `react-router` tidak secara otomatis mengembalikan posisi scroll ke atas saat berpindah halaman. Ini menyebabkan halaman baru ditampilkan dari posisi scroll halaman sebelumnya (misalnya, dari bagian bawah).
+  - **Cara Kerja**: Komponen ini menggunakan *hook* `useLocation` untuk mendeteksi setiap perubahan pada URL. Ketika URL berubah, ia secara otomatis menjalankan `window.scrollTo(0, 0)`, memaksa halaman untuk selalu ditampilkan dari paling atas.
 
 ---
 
 ## Bab 5: Arsitektur Backend (FastAPI)
 
-Backend proyek ini berfungsi sebagai REST API yang dibangun menggunakan FastAPI (Python) dengan arsitektur berlapis (layered architecture) untuk memastikan kode yang terorganisir, mudah dikelola, dan skalabel.
+Backend proyek ini berfungsi sebagai REST API yang dibangun menggunakan FastAPI (Python) dengan **arsitektur berlapis (layered architecture)** untuk memastikan kode yang terorganisir, mudah dikelola, dan skalabel. Arsitektur ini memisahkan tanggung jawab menjadi beberapa lapisan yang jelas.
 
 ### Struktur Direktori Backend
-- **`main.py`**: Titik masuk (entry point) aplikasi FastAPI. Tugasnya hanya menginisialisasi aplikasi, mengatur middleware (seperti CORS), dan menyertakan router dari modul lain.
-- **`/models`**: Mendefinisikan bentuk data (skema) menggunakan Pydantic.
-- **`/repositories`**: Lapisan akses data. Bertanggung jawab untuk berkomunikasi langsung dengan sumber data (dalam kasus ini, file `cars.json`).
-- **`/controllers`**: Lapisan logika bisnis. Memproses permintaan, melakukan validasi, dan memanggil *repository* untuk mengambil atau memanipulasi data.
-- **`/routes`**: Lapisan routing. Mendefinisikan endpoint API (URL) dan menghubungkannya ke fungsi di *controller*.
+- **`main.py`**: Titik masuk (entry point) aplikasi FastAPI. Tugasnya hanya menginisialisasi aplikasi, mengatur middleware (seperti CORS), dan menyertakan *router* dari modul lain.
+- **`/database`**: Mengatur koneksi ke database PostgreSQL menggunakan SQLAlchemy/SQLModel.
+- **`/models`**: Mendefinisikan bentuk data (skema) menggunakan SQLModel. Ini adalah blueprint untuk tabel di database dan juga untuk validasi data API.
+- **`/repositories`**: **Lapisan Akses Data (Data Access Layer)**. Bertanggung jawab untuk berkomunikasi **langsung dengan database**. Semua query SQL (dieksekusi melalui SQLAlchemy) berada di sini.
+- **`/controllers`**: **Lapisan Logika Bisnis (Business Logic Layer)**. Menjembatani `routes` dan `repositories`. Memproses data masuk, melakukan validasi, dan memanggil fungsi di `repository`.
+- **`/routes`**: **Lapisan Routing**. Mendefinisikan endpoint API (URL) dan menghubungkannya ke fungsi di *controller*.
 
 ### Alur Kerja Permintaan (Request Flow)
 1.  **Permintaan Masuk**: Frontend mengirim permintaan HTTP ke sebuah URL (misal: `GET /cars`).
-2.  **Routing (`/routes`)**: `car_routes.py` menerima permintaan ini, karena cocok dengan endpoint `/cars`, dan memanggil fungsi yang sesuai dari `car_controller`.
+2.  **Routing (`/routes`)**: `car_routes.py` menerima permintaan ini karena cocok dengan endpoint `/cars`, lalu memanggil fungsi yang sesuai dari `car_controller`.
 3.  **Logika Bisnis (`/controllers`)**: `car_controller.py` mengeksekusi logika. Untuk `GET /cars`, ia hanya perlu memanggil `car_repository` untuk mendapatkan semua data mobil.
-4.  **Akses Data (`/repositories`)**: `car_repository.py` membaca file `cars.json`, mengubahnya menjadi daftar objek Python, dan mengembalikannya ke *controller*.
+4.  **Akses Data (`/repositories`)**: `car_repository.py` **menjalankan query SQL** (misalnya, `select(Car).offset(skip).limit(limit)`) ke database PostgreSQL menggunakan SQLAlchemy dan mengembalikan hasilnya (objek model) ke *controller*.
 5.  **Respons**: Data dikembalikan melalui lapisan-lapisan hingga sampai ke frontend sebagai respons JSON.
 
 ### Penjelasan per Lapisan
 
-#### `models/car_model.py`
-- **Tujuan**: Mendefinisikan struktur data yang valid.
-- **Isi**: Class Pydantic seperti `Car` (untuk data lengkap) dan `UpdateCar` (untuk data pembaruan). Ini memastikan konsistensi data di seluruh aplikasi.
+#### `models`
+- **Tujuan**: Mendefinisikan struktur data yang valid dan bentuk tabel database.
+- **Isi**: Kelas-kelas yang mewarisi dari `SQLModel`. Contoh: `Car`, `User`. Ini memastikan konsistensi data di seluruh aplikasi.
 
-#### `repositories/car_repository.py`
-- **Tujuan**: Mengabstraksi sumber data.
-- **Isi**: Fungsi-fungsi untuk CRUD (Create, Read, Update, Delete) data di `cars.json`. Misalnya `load_car_data`, `save_car_data`, `find_car_by_id`. *Controller* tidak perlu tahu bahwa data disimpan di file JSON.
+#### `repositories`
+- **Tujuan**: Mengisolasi semua logika akses database. Ini adalah **satu-satunya lapisan yang "tahu" cara berbicara dengan database**. Jika Anda mengganti database dari PostgreSQL ke MySQL, lapisan inilah yang akan diubah.
+- **Isi**: Fungsi-fungsi seperti `create_car`, `get_all_cars`, `get_car_by_id` yang berisi perintah SQLAlchemy (`session.add()`, `session.exec(select(...))`, `session.get()`). Ia menerima *session* database dari *controller* dan menggunakannya untuk melakukan operasi.
 
-#### `controllers/car_controller.py`
-- **Tujuan**: Menjalankan logika bisnis inti.
-- **Isi**: Fungsi seperti `get_all_cars`, `create_new_car`, dll. Fungsi ini menangani validasi, memformat data, dan memutuskan fungsi *repository* mana yang harus dipanggil.
+#### `controllers`
+- **Tujuan**: Menjalankan logika bisnis dan mengoordinasikan alur kerja. Lapisan ini tidak tahu apa-apa tentang database, ia hanya tahu cara berbicara dengan *repository*.
+- **Isi**: Fungsi seperti `create_new_car`, `get_all_cars`. Fungsi ini menerima data dari *router*, melakukan pemeriksaan (misalnya, "apakah mobil dengan ID ini ada sebelum dihapus?"), lalu memanggil fungsi yang sesuai di `car_repository`. Ia juga bertanggung jawab untuk menangani `HTTPException` (seperti error 404 Not Found).
 
-#### `routes/car_routes.py`
-- **Tujuan**: Mendefinisikan API endpoint.
-- **Isi**: Menggunakan `APIRouter` dari FastAPI untuk mendeklarasikan path seperti `@router.get("/cars")` dan menghubungkannya ke fungsi di *controller*.
+#### `routes`
+- **Tujuan**: Mendefinisikan API endpoint yang bisa diakses oleh dunia luar (frontend).
+- **Isi**: Menggunakan `APIRouter` dari FastAPI untuk mendeklarasikan path seperti `@router.get("/cars")` dan menghubungkannya ke fungsi di *controller*. Lapisan ini bertanggung jawab untuk menangani dependensi seperti `SessionDep`.
 
 ---
 
@@ -143,11 +147,11 @@ Komunikasi terjadi melalui **permintaan HTTP** menggunakan `fetch` API di fronte
 - **Pentingnya CORS (Cross-Origin Resource Sharing)**: Karena frontend dan backend berjalan di port yang berbeda, backend perlu dikonfigurasi untuk mengizinkan permintaan dari frontend. Ini dilakukan di `main.py` menggunakan `CORSMiddleware`, yang secara eksplisit mengizinkan origin `http://localhost:3000`.
 
 ### Contoh Alur: Menampilkan Detail Mobil
-1.  **Pengguna**: Mengklik mobil di halaman koleksi. URL berubah menjadi `/cars/1`.
+1.  **Pengguna**: Mengklik mobil di halaman koleksi. URL berubah menjadi `/koleksi/1`.
 2.  **Frontend**: Komponen `CarDetailPage.tsx` dirender dan mengambil `carId` (yaitu `1`) dari URL.
 3.  **Frontend**: `useEffect` memicu panggilan `fetch('http://localhost:8000/cars/1')`.
 4.  **Backend**: Menerima permintaan `GET` di endpoint `/cars/{car_id}`.
-5.  **Backend**: Alur `routes` -> `controllers` -> `repositories` dieksekusi untuk menemukan mobil dengan `id: 1` di `cars.json`.
+5.  **Backend**: Alur `routes` -> `controllers` -> `repositories` dieksekusi untuk menemukan mobil dengan `id: 1` di **database**.
 6.  **Backend**: Mengirimkan kembali data mobil yang ditemukan sebagai respons JSON.
 7.  **Frontend**: Menerima respons, menyimpannya dalam *state*, dan menampilkan detail mobil di layar.
 
@@ -171,3 +175,80 @@ Komunikasi terjadi melalui **permintaan HTTP** menggunakan `fetch` API di fronte
 2.  **Isi Komponen**: Buat komponen React dasar di dalamnya.
 3.  **Daftarkan Rute**: Di `src/App.tsx`, impor komponen baru dan tambahkan `<Route path="/kontak" element={<ContactPage />} />` di dalam `<Routes>`.
 4.  **Tambah Link (Opsional)**: Di `src/components/Header.tsx`, tambahkan `<Link to="/kontak">Kontak</Link>` agar muncul di navigasi.
+
+---
+
+## Bab 8: Pembaruan Fitur - Autentikasi dan Role Pengguna
+
+Bagian ini menjelaskan fitur-fitur keamanan dan manajemen pengguna baru yang telah ditambahkan ke dalam proyek.
+
+### 1. Sistem Autentikasi Berbasis JWT (JSON Web Token)
+
+Aplikasi kini dilengkapi sistem autentikasi aman menggunakan JSON Web Token (JWT) untuk melindungi data dan halaman admin.
+
+-   **Alur Login**:
+    1.  Pengguna memasukkan kredensial di halaman Login.
+    2.  Frontend mengirim data ke endpoint backend `POST /users/login`.
+    3.  Backend memverifikasi kredensial dengan hash password di database.
+    4.  Jika berhasil, backend membuat sebuah **token JWT** yang berisi informasi pengguna (seperti `username` dan `role`) dan mengirimkannya kembali ke frontend.
+    5.  Frontend menerima token ini dan menyimpannya di `sessionStorage` browser untuk digunakan pada sesi tersebut.
+
+### 2. Manajemen Role Pengguna (RBAC - Role-Based Access Control)
+
+Struktur database telah diperbarui untuk mendukung sistem peran pengguna, memungkinkan adanya level akses yang berbeda.
+
+-   **Struktur Database**:
+    -   Tabel **`roles`**: Sebuah tabel baru yang berisi daftar semua peran yang mungkin (misalnya, `id: 1, name: 'admin_utama'`).
+    -   Tabel **`users`**: Tabel pengguna sekarang memiliki kolom `role_id` yang berfungsi sebagai *foreign key* yang merujuk ke tabel `roles`.
+-   **Tiga Peran Utama**:
+    1.  **AdminUtama**: Memiliki akses tertinggi.
+    2.  **Admin**: Memiliki akses administratif standar.
+    3.  **Sales**: Memiliki akses terbatas, hanya untuk fitur-fitur penjualan.
+-   **Script Pembuatan Pengguna (`create_user.py`)**: Sebuah script utilitas telah dibuat untuk membantu developer menambahkan pengguna baru ke database dengan password yang sudah di-hash dan `role_id` yang sesuai.
+
+### 3. Logika Frontend Berbasis Peran (Role-Aware)
+
+Frontend kini "sadar" akan peran pengguna yang sedang login dan dapat menyesuaikan tampilannya.
+
+-   **Pengalihan Dinamis**: Setelah login berhasil, `LoginPage.tsx` mendekode token JWT untuk membaca `role` pengguna. Berdasarkan `role` ini, pengguna akan diarahkan ke dasbor yang sesuai (misalnya, `/admin/dashboard` untuk admin atau `/sales/dashboard` untuk sales).
+-   **Komponen Terproteksi (`ProtectedComponent.tsx`)**: Sebuah komponen baru telah dibuat yang dapat "membungkus" bagian dari UI. Komponen ini hanya akan menampilkan isinya jika `role` pengguna yang sedang login cocok dengan `requiredRole` yang ditentukan.
+
+### 4. Konteks Global untuk Autentikasi (`AuthContext.tsx`)
+
+Manajemen status login kini terpusat dan lebih modern menggunakan React Context.
+
+-   **Fungsi**: `AuthContext` menjadi "sumber kebenaran tunggal" untuk status login di seluruh aplikasi.
+-   **Isi**: Menyediakan informasi `user` (username dan role), `token`, serta fungsi `login()` dan `logout()` yang bisa diakses oleh komponen mana pun (seperti `Header` dan `LoginPage`) tanpa perlu meneruskan *props*.
+-   **Persistensi**: `AuthContext` secara otomatis memeriksa `sessionStorage` saat aplikasi dimuat. Ini berarti jika pengguna me-refresh halaman, mereka akan tetap dalam keadaan login.
+
+---
+
+## Bab 9: (BARU) Sistem Izin Granular (Permissions)
+
+Sebagai pengembangan dari sistem Role-Based Access Control (RBAC), kini telah diimplementasikan sistem izin (permissions) yang lebih detail dan granular. Ini memberikan kontrol yang lebih presisi terhadap tindakan apa yang bisa dilakukan oleh setiap role.
+
+### 1. Struktur Database yang Ditingkatkan
+
+Struktur database telah diperluas untuk mendukung hubungan *many-to-many* antara `roles` dan `permissions`.
+
+-   **Tabel `permissions`**: Sebuah tabel baru yang berfungsi sebagai "kamus" untuk semua tindakan yang mungkin ada di aplikasi. Setiap izin memiliki `id`, `name` (contoh: `CAN_DELETE_CARS`, `chat.view_all`), dan `description`.
+
+-   **Tabel `role_permissions`**: Ini adalah tabel penghubung (*link table*) yang memetakan `role_id` ke `permission_id`. Tabel ini secara efektif mendefinisikan "kemampuan" dari setiap role.
+
+### 2. Logika Backend yang Lebih Cerdas
+
+Backend sekarang menyertakan daftar lengkap izin pengguna ke dalam token JWT.
+
+-   **Payload JWT Diperkaya**: Saat pengguna login, backend tidak hanya menyertakan `username` dan `role`, tetapi juga melakukan `JOIN` ke tabel `role_permissions` dan `permissions` untuk mengumpulkan semua nama izin yang dimiliki oleh role pengguna tersebut. Daftar izin ini kemudian ditambahkan ke dalam payload token.
+
+-   **Keuntungan Efisiensi**: Dengan semua izin sudah ada di dalam token, backend tidak perlu lagi melakukan query ke database untuk memeriksa izin setiap kali ada permintaan ke endpoint yang dilindungi. Pemeriksaan terjadi dengan sangat cepat hanya dengan mendekode token.
+
+### 3. Otorisasi Berbasis Izin di Frontend
+
+Frontend sekarang melakukan otorisasi berdasarkan izin spesifik, bukan hanya berdasarkan role.
+
+-   **`AuthContext.tsx` Diperbarui**: Konteks autentikasi sekarang juga menyimpan daftar `permissions` pengguna dalam sebuah `Set` (untuk pencarian yang efisien) dan menyediakan fungsi `checkPermission(permission: string)`.
+
+-   **`ProtectedComponent.tsx` Ditingkatkan**: Komponen ini tidak lagi menggunakan prop `requiredRole`, melainkan `requiredPermission`. Ia sekarang memanggil `checkPermission` dari `AuthContext` untuk menentukan apakah pengguna yang login memiliki izin spesifik yang dibutuhkan untuk menampilkan sebuah elemen UI.
+
+-   **Contoh Praktis**: Tombol "Hapus Mobil" di dasbor sekarang dibungkus dengan `<ProtectedComponent requiredPermission="CAN_DELETE_CARS">`. Tombol ini hanya akan muncul jika pengguna yang login (misalnya, `admin`) memiliki izin `CAN_DELETE_CARS` di dalam token JWT mereka, meskipun pengguna lain (misalnya, `sales`) mungkin juga bisa mengakses dasbor yang sama.
