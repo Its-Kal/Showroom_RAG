@@ -15,14 +15,14 @@ import NotFoundPage from './pages/NotFoundPage';
 import CarListPage from './pages/CarListPage';
 import LoginPage from './pages/LoginPage';
 import { DashboardPage } from './pages/admin/DashboardPage';
-import { SalesDashboardPage } from './pages/sales/SalesDashboardPage'; // IMPORT THE NEW PAGE
+import { SalesDashboardPage } from './pages/sales/SalesDashboardPage';
 
 // Layout component for public pages
 const PublicLayout = () => (
   <div className="App">
     <Header />
     <main>
-      <Outlet />
+      <Outlet /> {/* Child routes will render here */}
     </main>
     <Footer />
   </div>
@@ -44,8 +44,9 @@ const AppContent = () => {
         </Route>
 
         {/* Routes without public layout */}
-        <Route path="/admin/dashboard" element={<DashboardPage />} />
-        <Route path="/sales/dashboard" element={<SalesDashboardPage />} /> {/* ADD THE NEW ROUTE */}
+        {/* Changed /admin/dashboard to /admin/dashboard/* to allow nested routes */}
+        <Route path="/admin/dashboard/*" element={<DashboardPage />} /> 
+        <Route path="/sales/dashboard" element={<SalesDashboardPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* Catch-all 404 route */}
