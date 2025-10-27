@@ -12,6 +12,8 @@ import { UserManagement } from '../../components/dashboard/UserManagement';
 import { ChatManagement } from '../../components/dashboard/ChatManagement';
 import { RoleManagement } from '../../components/dashboard/RoleManagement';
 
+
+// Komponen Gabungan
 export const DashboardPage: React.FC = () => {
     const { user, checkPermission } = useAuth();
 

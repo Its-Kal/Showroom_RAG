@@ -1,5 +1,7 @@
-from sqlmodel import Session, select
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 from models.user_model import User
+from schemas_definition import UserCreate
 
 def get_user_by_username(session: Session, username: str) -> User | None:
     """
