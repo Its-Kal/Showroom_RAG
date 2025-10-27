@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
@@ -15,13 +15,14 @@ import NotFoundPage from './pages/NotFoundPage';
 import CarListPage from './pages/CarListPage';
 import LoginPage from './pages/LoginPage';
 import { DashboardPage } from './pages/admin/DashboardPage';
+import { SalesDashboardPage } from './pages/sales/SalesDashboardPage'; // IMPORT THE NEW PAGE
 
 // Layout component for public pages
 const PublicLayout = () => (
   <div className="App">
     <Header />
     <main>
-      <Outlet /> {/* Child routes will render here */}
+      <Outlet />
     </main>
     <Footer />
   </div>
@@ -34,7 +35,7 @@ const AppContent = () => {
     <>
       {isLoading && <LoadingScreen />}
       <Routes>
-        {/* Routes with public layout (Header/Footer) */}
+        {/* Routes with public layout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -44,6 +45,7 @@ const AppContent = () => {
 
         {/* Routes without public layout */}
         <Route path="/admin/dashboard" element={<DashboardPage />} />
+        <Route path="/sales/dashboard" element={<SalesDashboardPage />} /> {/* ADD THE NEW ROUTE */}
         <Route path="/login" element={<LoginPage />} />
 
         {/* Catch-all 404 route */}

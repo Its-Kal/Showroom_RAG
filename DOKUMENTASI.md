@@ -220,3 +220,35 @@ Manajemen status login kini terpusat dan lebih modern menggunakan React Context.
 -   **Fungsi**: `AuthContext` menjadi "sumber kebenaran tunggal" untuk status login di seluruh aplikasi.
 -   **Isi**: Menyediakan informasi `user` (username dan role), `token`, serta fungsi `login()` dan `logout()` yang bisa diakses oleh komponen mana pun (seperti `Header` dan `LoginPage`) tanpa perlu meneruskan *props*.
 -   **Persistensi**: `AuthContext` secara otomatis memeriksa `sessionStorage` saat aplikasi dimuat. Ini berarti jika pengguna me-refresh halaman, mereka akan tetap dalam keadaan login.
+
+---
+
+## Bab 9: (BARU) Sistem Izin Granular (Permissions)
+
+Sebagai pengembangan dari sistem Role-Based Access Control (RBAC), kini telah diimplementasikan sistem izin (permissions) yang lebih detail dan granular. Ini memberikan kontrol yang lebih presisi terhadap tindakan apa yang bisa dilakukan oleh setiap role.
+
+### 1. Struktur Database yang Ditingkatkan
+
+Struktur database telah diperluas untuk mendukung hubungan *many-to-many* antara `roles` dan `permissions`.
+
+-   **Tabel `permissions`**: Sebuah tabel baru yang berfungsi sebagai "kamus" untuk semua tindakan yang mungkin ada di aplikasi. Setiap izin memiliki `id`, `name` (contoh: `CAN_DELETE_CARS`, `chat.view_all`), dan `description`.
+
+-   **Tabel `role_permissions`**: Ini adalah tabel penghubung (*link table*) yang memetakan `role_id` ke `permission_id`. Tabel ini secara efektif mendefinisikan "kemampuan" dari setiap role.
+
+### 2. Logika Backend yang Lebih Cerdas
+
+Backend sekarang menyertakan daftar lengkap izin pengguna ke dalam token JWT.
+
+-   **Payload JWT Diperkaya**: Saat pengguna login, backend tidak hanya menyertakan `username` dan `role`, tetapi juga melakukan `JOIN` ke tabel `role_permissions` dan `permissions` untuk mengumpulkan semua nama izin yang dimiliki oleh role pengguna tersebut. Daftar izin ini kemudian ditambahkan ke dalam payload token.
+
+-   **Keuntungan Efisiensi**: Dengan semua izin sudah ada di dalam token, backend tidak perlu lagi melakukan query ke database untuk memeriksa izin setiap kali ada permintaan ke endpoint yang dilindungi. Pemeriksaan terjadi dengan sangat cepat hanya dengan mendekode token.
+
+### 3. Otorisasi Berbasis Izin di Frontend
+
+Frontend sekarang melakukan otorisasi berdasarkan izin spesifik, bukan hanya berdasarkan role.
+
+-   **`AuthContext.tsx` Diperbarui**: Konteks autentikasi sekarang juga menyimpan daftar `permissions` pengguna dalam sebuah `Set` (untuk pencarian yang efisien) dan menyediakan fungsi `checkPermission(permission: string)`.
+
+-   **`ProtectedComponent.tsx` Ditingkatkan**: Komponen ini tidak lagi menggunakan prop `requiredRole`, melainkan `requiredPermission`. Ia sekarang memanggil `checkPermission` dari `AuthContext` untuk menentukan apakah pengguna yang login memiliki izin spesifik yang dibutuhkan untuk menampilkan sebuah elemen UI.
+
+-   **Contoh Praktis**: Tombol "Hapus Mobil" di dasbor sekarang dibungkus dengan `<ProtectedComponent requiredPermission="CAN_DELETE_CARS">`. Tombol ini hanya akan muncul jika pengguna yang login (misalnya, `admin`) memiliki izin `CAN_DELETE_CARS` di dalam token JWT mereka, meskipun pengguna lain (misalnya, `sales`) mungkin juga bisa mengakses dasbor yang sama.
