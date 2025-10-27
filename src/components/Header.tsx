@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import '../App.css';
+import { useAuth } from '../contexts/AuthContext'; // IMPORT useAuth
 
-interface HeaderProps {
-  isLoggedIn: boolean;
-  onLogout: () => void;
-}
+// REMOVE HeaderProps interface
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
+const Header: React.FC = () => { // REMOVE props
+  const { user, logoutMock } = useAuth(); // USE useAuth hook
+  const isLoggedIn = !!user; // DERIVE isLoggedIn from user
+  const onLogout = logoutMock; // USE logoutMock for onLogout
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
@@ -23,16 +25,13 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > window.innerHeight - 100);
     };
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  // Cek apakah kita berada di halaman admin
-  const isAdminPage = location.pathname.startsWith('/admin');
 
   const renderLoginButton = () => {
     if (isLoggedIn) {
@@ -60,7 +59,11 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
   };
 
   return (
-    <header className={`header ${(isScrolled || isAdminPage) ? 'scrolled' : ''}`}>
+    <nav
+      className={`header ${
+        location.pathname !== '/' || isScrolled ? 'scrolled' : ''
+      }`}
+    >
       <div className="nav-container">
         <div className="logo">
           <Link to="/" onClick={closeMenu} className="logo-link">
@@ -80,7 +83,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
             <li><NavLink to="/" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Beranda</NavLink></li>
             <li><NavLink to="/koleksi" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Koleksi</NavLink></li>
             <li><NavLink to="/about" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Tentang Kami</NavLink></li>
-            {isLoggedIn && <li><NavLink to="/admin" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink></li>}
+            {/* UPDATE Admin link to /admin/dashboard */}
+            {isLoggedIn && <li><NavLink to="/admin/dashboard" onClick={closeMenu} className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink></li>}
           </ul>
           {renderMobileLoginButton()}
         </nav>
@@ -92,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogout }) => {
           </button>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 

@@ -1,57 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
 import { LoadingProvider, useLoading } from './contexts/LoadingContext';
+import { AuthProvider } from './contexts/AuthContext'; // V3 IMPORT
 import LoadingScreen from './LoadingScreen';
 
-// Import pages directly
+// Import pages
 import HomePage from './pages/HomePage';
 import CarDetailPage from './pages/CarDetailPage';
 import AboutPage from './pages/AboutPage';
 import NotFoundPage from './pages/NotFoundPage';
 import CarListPage from './pages/CarListPage';
 import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
+import { DashboardPage } from './pages/admin/DashboardPage'; // V3 IMPORT
 
 const AppContent = () => {
   const { isLoading } = useLoading();
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const loggedInStatus = sessionStorage.getItem('isLoggedIn');
-    if (loggedInStatus === 'true') {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  const handleLogin = () => {
-    sessionStorage.setItem('isLoggedIn', 'true');
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('isLoggedIn');
-    setIsLoggedIn(false);
-  };
 
   // Sembunyikan Header dan Footer di halaman login dan admin
-  const showHeaderFooter = !['/login', '/admin'].includes(location.pathname);
+  const showHeaderFooter = !['/login', '/admin/dashboard'].includes(location.pathname);
 
   return (
     <>
       {isLoading && <LoadingScreen />}
       <Routes>
-        {/* Rute tanpa Header/Footer */}
-        <Route path="/admin" element={isLoggedIn ? <AdminDashboard onLogout={handleLogout} /> : <LoginPage onLogin={handleLogin} />} />
-        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        {/* V3 Route: /admin/dashboard now renders DashboardPage, protected internally */}
+        <Route path="/admin/dashboard" element={<DashboardPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Rute untuk halaman publik dengan layout Header/Footer */}
         <Route path="/*" element={
           <div className="App">
-            <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+            {/* Header no longer needs login management props */}
+            <Header />
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
@@ -71,7 +55,10 @@ function App() {
   return (
     <LoadingProvider>
       <Router>
-        <AppContent />
+        {/* V3: AuthProvider wraps the app content */}
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </Router>
     </LoadingProvider>
   );

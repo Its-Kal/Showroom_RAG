@@ -3,12 +3,12 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
+from typing import Callable
 
-import models.user_model as models
+from models.user_model import User
 import repositories.user_repository as user_repository
-import schemas
-from database import get_db
-from models.user_model import UserRole
+import schemas_definition as schemas
+from db import get_db
 
 # It's recommended to load this from environment variables
 SECRET_KEY = "your-super-secret-key-that-is-long-and-random"
@@ -24,7 +24,7 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def get_current_active_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_active_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -45,7 +45,7 @@ def get_current_active_user(token: str = Depends(oauth2_scheme), db: Session = D
         raise credentials_exception
 
     # Verify role from token against the role in the database
-    if user.role.value != token_data.role:
+    if not user.role or user.role.name != token_data.role:
          raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token/Role mismatch. Please re-login.")
 
     if not user.is_active:
@@ -53,33 +53,23 @@ def get_current_active_user(token: str = Depends(oauth2_scheme), db: Session = D
         
     return user
 
-def get_current_active_admin_utama(current_user: models.User = Depends(get_current_active_user)):
-    if current_user.role != models.UserRole.ADMIN_UTAMA:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The user does not have enough privileges",
-        )
-    return current_user
-
-def get_current_active_admin(current_user: models.User = Depends(get_current_active_user)):
-    if current_user.role not in [models.UserRole.ADMIN_UTAMA, models.UserRole.ADMIN]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The user does not have enough privileges",
-        )
-    return current_user
-
-def role_checker(allowed_roles: list[UserRole]):
+def require_permission(required_permission: str) -> Callable:
     """
-    Dependency factory to check user roles.
+    Dependency factory to check if a user has a specific permission.
     """
-    def get_current_user_with_roles(
-        current_user: models.User = Depends(get_current_active_user)
-    ):
-        if current_user.role not in allowed_roles:
+    def _check_permission(current_user: User = Depends(get_current_active_user)) -> User:
+        if not current_user.role:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Forbidden: You do not have access to this resource."
+                detail="Akses ditolak: User tidak memiliki role."
+            )
+        
+        user_permissions = {perm.name for perm in current_user.role.permissions}
+        
+        if required_permission not in user_permissions:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Akses ditolak: Anda tidak memiliki izin yang diperlukan."
             )
         return current_user
-    return get_current_user_with_roles
+    return _check_permission

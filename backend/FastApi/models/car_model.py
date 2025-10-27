@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, JSON
-from database import Base
+from db import Base
 
 class Car(Base):
     __tablename__ = "cars"

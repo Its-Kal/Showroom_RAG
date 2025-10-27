@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import re
 
 from models.user_model import User
-from schemas import UserCreate
+from schemas_definition import UserCreate
 import repositories.user_repository as user_repo
 from controllers.utils import hash_password, verify_password
 
@@ -39,13 +39,21 @@ def register_new_user(user_create: UserCreate, session: Session) -> User:
             detail="Username already taken",
         )
 
+    # Fetch the role from the database
+    role = user_repo.get_role_by_id(session, role_id=user_create.role_id)
+    if not role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Role with id {user_create.role_id} not found",
+        )
+
     hashed_pwd = hash_password(user_create.password)
 
     db_user = User(
         username=username,
         email=email,
         hashed_password=hashed_pwd,
-        role=user_create.role
+        role=role # Assign the fetched Role object
     )
 
     return user_repo.add_user_to_db(session=session, db_user=db_user)
