@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => { // V3 REFACTOR: Removed onLogin prop
                 const data = await response.json();
                 message.success(data.message);
                 loginMock(); // V3 REFACTOR: Call context login function
-                navigate('/admin'); // Redirect to admin page
+                navigate('/admin/dashboard'); // Redirect to admin page
             } else {
                 // Login failed - show modal error
                 showErrorModal();

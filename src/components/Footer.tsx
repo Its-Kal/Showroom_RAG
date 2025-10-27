@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
       <div className="footer-content">
         <div className="company-info">
           <div className="logo-footer">
-            <img src="/asset/logo-putih.png" alt="Logo Perusahaan Hitam" />
+            <img src="/asset/logo-putih.png" alt="Logo Perusahaan Putih" />
           </div>
           <p>
             Showroom mobil premium terpercaya dengan koleksi kendaraan mewah dari brand-brand terkemuka dunia.<br />
